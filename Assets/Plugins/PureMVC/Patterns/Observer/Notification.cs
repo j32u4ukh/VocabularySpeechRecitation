@@ -10,6 +10,7 @@ using PureMVC.Interfaces;
 namespace PureMVC.Patterns.Observer
 {
     /// <summary>
+    /// Notification（通知）負責傳遞資訊
     /// A base <c>INotification</c> implementation.
     /// </summary>
     /// <remarks>

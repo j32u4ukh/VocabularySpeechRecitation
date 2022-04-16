@@ -50,6 +50,22 @@ namespace PureMVC.Patterns.Observer
     /// <seealso cref="PureMVC.Patterns.Command.SimpleCommand"/>
     public class Notifier: INotifier
     {
+        /// <summary> Return the Multiton Facade instance</summary>
+        protected IFacade Facade
+        {
+            get
+            {
+                if (MultitonKey == null) throw new Exception(MULTITON_MSG);
+                return Patterns.Facade.Facade.GetInstance(MultitonKey, key => new Facade.Facade(key));
+            }
+        }
+
+        /// <summary>The Multiton Key for this app</summary>
+        public string MultitonKey { get; protected set; }
+
+        /// <summary>Message Constants</summary>
+        protected string MULTITON_MSG = "multitonKey for this Notifier not yet initialized!";
+
         /// <summary>
         /// Create and send an <c>INotification</c>.
         /// </summary>
@@ -91,20 +107,5 @@ namespace PureMVC.Patterns.Observer
         {
             MultitonKey = key;
         }
-
-        /// <summary> Return the Multiton Facade instance</summary>
-        protected IFacade Facade
-        {
-            get {
-                if (MultitonKey == null) throw new Exception(MULTITON_MSG);
-                return Patterns.Facade.Facade.GetInstance(MultitonKey, key => new Facade.Facade(key));
-            }
-        }
-
-        /// <summary>The Multiton Key for this app</summary>
-        public string MultitonKey { get; protected set; }
-
-        /// <summary>Message Constants</summary>
-        protected string MULTITON_MSG = "multitonKey for this Notifier not yet initialized!";
     }
 }

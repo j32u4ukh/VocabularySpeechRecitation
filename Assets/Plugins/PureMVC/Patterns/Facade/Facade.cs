@@ -14,6 +14,8 @@ using System.Collections.Concurrent;
 namespace PureMVC.Patterns.Facade
 {
     /// <summary>
+    /// 透過 Facade 對 IModel, IView, IController 進行管理
+    /// Facade（外觀）是 MVC 三者的經紀人，統管全域性
     /// A base Multiton <c>IFacade</c> implementation.
     /// </summary>
     /// <seealso cref="PureMVC.Core.Model"/>
@@ -21,6 +23,27 @@ namespace PureMVC.Patterns.Facade
     /// <seealso cref="PureMVC.Core.Controller"/>
     public class Facade: IFacade
     {
+        // 透過 ICommand 對 命令/流程 進行管理
+        /// <summary>References to Controller</summary>
+        protected IController controller;
+
+        // 透過 IProxy 對 數據 進行管理
+        /// <summary>References to Model</summary>
+        protected IModel model;
+
+        // 透過 IMediator 對 UI 進行管理
+        /// <summary>References to View</summary>
+        protected IView view;
+
+        // 若有多組 Facade(IModel, IView, IController)
+        /// <summary>The Multiton Key for this app</summary>
+        protected string multitonKey;
+
+        // 利用 key 對多組 Facade 進行管理
+        /// <summary>The Multiton Facade instanceMap.</summary>
+        protected static readonly ConcurrentDictionary<string, Lazy<IFacade>> InstanceMap = new ConcurrentDictionary<string, Lazy<IFacade>>();
+
+        #region Facade
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -42,6 +65,67 @@ namespace PureMVC.Patterns.Facade
         }
 
         /// <summary>
+        /// Facade Multiton Factory method
+        /// </summary>
+        /// <param name="key">Key of facade</param>
+        /// <param name="factory">the <c>FuncDelegate</c> of the <c>IFacade</c></param>
+        /// <returns>the Multiton instance of the Facade</returns>
+        public static IFacade GetInstance(string key, Func<string, IFacade> factory)
+        {
+            return InstanceMap.GetOrAdd(key, new Lazy<IFacade>(() => factory(key))).Value;
+        }
+
+        /// <summary>
+        ///  Check if a Core is registered or not
+        /// </summary>
+        /// <param name="key">the multiton key for the Core in question</param>
+        /// <returns>whether a Core is registered with the given <c>key</c>.</returns>
+        public static bool HasCore(string key)
+        {
+            return InstanceMap.TryGetValue(key, out _);
+        }
+
+        /// <summary>
+        /// Remove a Core.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Remove the Model, View, Controller and Facade 
+        ///         instances for the given key.
+        ///     </para>
+        /// </remarks>
+        /// <param name="key">multitonKey of the Core to remove</param>
+        public static void RemoveCore(string key)
+        {
+            if (InstanceMap.TryGetValue(key, out _) == false)
+            {
+                return;
+            }
+
+            Model.RemoveModel(key);
+            View.RemoveView(key);
+            Controller.RemoveController(key);
+            InstanceMap.TryRemove(key, out _);
+        }
+
+        /// <summary>
+        /// Set the Multiton key for this facade instance.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Not called directly, but instead from the 
+        ///         constructor when getInstance is invoked.
+        ///         It is necessary to be public in order to 
+        ///         implement INotifier.
+        ///     </para>
+        /// </remarks>
+        /// <param name="key"></param>
+        public virtual void InitializeNotifier(string key)
+        {
+            multitonKey = key;
+        }
+
+        /// <summary>
         /// Initialize the Multiton <c>Facade</c> instance.
         /// </summary>
         /// <remarks>
@@ -56,43 +140,10 @@ namespace PureMVC.Patterns.Facade
             InitializeModel();
             InitializeController();
             InitializeView();
-        }
+        } 
+        #endregion
 
-        /// <summary>
-        /// Facade Multiton Factory method
-        /// </summary>
-        /// <param name="key">Key of facade</param>
-        /// <param name="factory">the <c>FuncDelegate</c> of the <c>IFacade</c></param>
-        /// <returns>the Multiton instance of the Facade</returns>
-        public static IFacade GetInstance(string key, Func<string, IFacade> factory)
-        {
-            return InstanceMap.GetOrAdd(key, new Lazy<IFacade>(() => factory(key))).Value;
-        }
-
-        /// <summary>
-        /// Initialize the <c>Controller</c>.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Called by the <c>initializeFacade</c> method.
-        ///         Override this method in your subclass of <c>Facade</c> 
-        ///         if one or both of the following are true:
-        ///         <list type="bullet">
-        ///             <item>You wish to initialize a different <c>IController</c>.</item>
-        ///             <item>You have <c>Commands</c> to register with the <c>Controller</c> at startup.</item>
-        ///         </list>
-        ///     </para>
-        ///     <para>
-        ///         If you don't want to initialize a different <c>IController</c>, 
-        ///         call <c>super.initializeController()</c> at the beginning of your
-        ///         method, then register <c>Command</c>s.
-        ///     </para>
-        /// </remarks>
-        protected virtual void InitializeController()
-        {
-            controller = Controller.GetInstance(multitonKey, key => new Controller(key));
-        }
-
+        #region Model
         /// <summary>
         /// Initialize the <c>Model</c>.
         /// </summary>
@@ -124,54 +175,6 @@ namespace PureMVC.Patterns.Facade
         protected virtual void InitializeModel()
         {
             model = Model.GetInstance(multitonKey, key => new Model(key));
-        }
-
-        /// <summary>
-        /// Initialize the <c>View</c>.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Called by the <c>initializeFacade</c> method.
-        ///         Override this method in your subclass of <c>Facade</c> 
-        ///         if one or both of the following are true:
-        ///         <list type="bullet">
-        ///             <item>You wish to initialize a different <c>IView</c>.</item>
-        ///             <item>You have <c>Observers</c> to register with the <c>View</c></item>
-        ///         </list>
-        ///     </para>
-        /// </remarks>
-        protected virtual void InitializeView()
-        {
-            view = View.GetInstance(multitonKey, key => new View(key));
-        }
-
-        /// <summary>
-        /// Register an <c>ICommand</c> with the <c>Controller</c> by Notification name.
-        /// </summary>
-        /// <param name="notificationName">the name of the <c>INotification</c> to associate the <c>ICommand</c> with</param>
-        /// <param name="commandFunc">a reference to the Class of the <c>ICommand</c></param>
-        public virtual void RegisterCommand(string notificationName, Func<ICommand> commandFunc)
-        {
-            controller.RegisterCommand(notificationName, commandFunc);
-        }
-
-        /// <summary>
-        /// Remove a previously registered <c>ICommand</c> to <c>INotification</c> mapping from the Controller.
-        /// </summary>
-        /// <param name="notificationName">the name of the <c>INotification</c> to remove the <c>ICommand</c> mapping for</param>
-        public virtual void RemoveCommand(string notificationName)
-        {
-            controller.RemoveCommand(notificationName);
-        }
-
-        /// <summary>
-        /// Check if a Command is registered for a given Notification 
-        /// </summary>
-        /// <param name="notificationName"></param>
-        /// <returns>whether a Command is currently registered for the given <c>notificationName</c>.</returns>
-        public virtual bool HasCommand(string notificationName)
-        {
-            return controller.HasCommand(notificationName);
         }
 
         /// <summary>
@@ -212,6 +215,27 @@ namespace PureMVC.Patterns.Facade
         {
             return model.HasProxy(proxyName);
         }
+        #endregion
+
+        #region View
+        /// <summary>
+        /// Initialize the <c>View</c>.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Called by the <c>initializeFacade</c> method.
+        ///         Override this method in your subclass of <c>Facade</c> 
+        ///         if one or both of the following are true:
+        ///         <list type="bullet">
+        ///             <item>You wish to initialize a different <c>IView</c>.</item>
+        ///             <item>You have <c>Observers</c> to register with the <c>View</c></item>
+        ///         </list>
+        ///     </para>
+        /// </remarks>
+        protected virtual void InitializeView()
+        {
+            view = View.GetInstance(multitonKey, key => new View(key));
+        }
 
         /// <summary>
         /// Register a <c>IMediator</c> with the <c>View</c>.
@@ -251,7 +275,64 @@ namespace PureMVC.Patterns.Facade
         {
             return view.HasMediator(mediatorName);
         }
+        #endregion
 
+        #region Controller
+        /// <summary>
+        /// Initialize the <c>Controller</c>.
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Called by the <c>initializeFacade</c> method.
+        ///         Override this method in your subclass of <c>Facade</c> 
+        ///         if one or both of the following are true:
+        ///         <list type="bullet">
+        ///             <item>You wish to initialize a different <c>IController</c>.</item>
+        ///             <item>You have <c>Commands</c> to register with the <c>Controller</c> at startup.</item>
+        ///         </list>
+        ///     </para>
+        ///     <para>
+        ///         If you don't want to initialize a different <c>IController</c>, 
+        ///         call <c>super.initializeController()</c> at the beginning of your
+        ///         method, then register <c>Command</c>s.
+        ///     </para>
+        /// </remarks>
+        protected virtual void InitializeController()
+        {
+            controller = Controller.GetInstance(multitonKey, key => new Controller(key));
+        }
+
+        /// <summary>
+        /// Register an <c>ICommand</c> with the <c>Controller</c> by Notification name.
+        /// </summary>
+        /// <param name="notificationName">the name of the <c>INotification</c> to associate the <c>ICommand</c> with</param>
+        /// <param name="commandFunc">a reference to the Class of the <c>ICommand</c></param>
+        public virtual void RegisterCommand(string notificationName, Func<ICommand> commandFunc)
+        {
+            controller.RegisterCommand(notificationName, commandFunc);
+        }
+
+        /// <summary>
+        /// Remove a previously registered <c>ICommand</c> to <c>INotification</c> mapping from the Controller.
+        /// </summary>
+        /// <param name="notificationName">the name of the <c>INotification</c> to remove the <c>ICommand</c> mapping for</param>
+        public virtual void RemoveCommand(string notificationName)
+        {
+            controller.RemoveCommand(notificationName);
+        }
+
+        /// <summary>
+        /// Check if a Command is registered for a given Notification 
+        /// </summary>
+        /// <param name="notificationName"></param>
+        /// <returns>whether a Command is currently registered for the given <c>notificationName</c>.</returns>
+        public virtual bool HasCommand(string notificationName)
+        {
+            return controller.HasCommand(notificationName);
+        }
+        #endregion
+
+        #region Notification
         /// <summary>
         /// Create and send an <c>INotification</c>.
         /// </summary>
@@ -288,68 +369,7 @@ namespace PureMVC.Patterns.Facade
         public virtual void NotifyObservers(INotification notification)
         {
             view.NotifyObservers(notification);
-        }
-
-        /// <summary>
-        /// Set the Multiton key for this facade instance.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Not called directly, but instead from the 
-        ///         constructor when getInstance is invoked.
-        ///         It is necessary to be public in order to 
-        ///         implement INotifier.
-        ///     </para>
-        /// </remarks>
-        /// <param name="key"></param>
-        public virtual void InitializeNotifier(string key)
-        {
-            multitonKey = key;
-        }
-
-        /// <summary>
-        ///  Check if a Core is registered or not
-        /// </summary>
-        /// <param name="key">the multiton key for the Core in question</param>
-        /// <returns>whether a Core is registered with the given <c>key</c>.</returns>
-        public static bool HasCore(string key)
-        {
-            return InstanceMap.TryGetValue(key, out _);
-        }
-
-        /// <summary>
-        /// Remove a Core.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Remove the Model, View, Controller and Facade 
-        ///         instances for the given key.
-        ///     </para>
-        /// </remarks>
-        /// <param name="key">multitonKey of the Core to remove</param>
-        public static void RemoveCore(string key)
-        {
-            if (InstanceMap.TryGetValue(key, out _) == false) return;
-            Model.RemoveModel(key);
-            View.RemoveView(key);
-            Controller.RemoveController(key);
-            InstanceMap.TryRemove(key, out _);
-        }
-
-        /// <summary>References to Controller</summary>
-        protected IController controller;
-
-        /// <summary>References to Model</summary>
-        protected IModel model;
-
-        /// <summary>References to View</summary>
-        protected IView view;
-
-        /// <summary>The Multiton Key for this app</summary>
-        protected string multitonKey;
-
-        /// <summary>The Multiton Facade instanceMap.</summary>
-        protected static readonly ConcurrentDictionary<string, Lazy<IFacade>> InstanceMap = new ConcurrentDictionary<string, Lazy<IFacade>>();
-
+        } 
+        #endregion
     }
 }

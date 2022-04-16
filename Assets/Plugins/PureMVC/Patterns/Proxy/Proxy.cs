@@ -37,6 +37,12 @@ namespace PureMVC.Patterns.Proxy
         /// <summary>Name of the proxy</summary>
         public const string NAME = "Proxy";
 
+        /// <summary>the proxy name</summary>
+        public string ProxyName { get; protected set; }
+
+        /// <summary>the proxy name</summary>
+        public object Data { get; set; }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -45,7 +51,11 @@ namespace PureMVC.Patterns.Proxy
         public Proxy(string proxyName, object data = null)
         {
             ProxyName = proxyName ?? NAME;
-            if (data != null) Data = data;
+
+            if (data != null)
+            {
+                Data = data;
+            }
         }
 
         /// <summary>
@@ -61,11 +71,5 @@ namespace PureMVC.Patterns.Proxy
         public virtual void OnRemove()
         {
         }
-
-        /// <summary>the proxy name</summary>
-        public string ProxyName { get; protected set; }
-
-        /// <summary>the proxy name</summary>
-        public object Data { get; set; }
     }
 }

@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 0
-    path: Assets/FantomPlugin/Demo/Scenes/SpeechRecognizerTest.unity
+    path: Assets/Plugins/FantomPlugin/Demo/Scenes/SpeechRecognizerTest.unity
     guid: 5e048b3a449b76349a587b48167046f9
   m_configObjects: {}

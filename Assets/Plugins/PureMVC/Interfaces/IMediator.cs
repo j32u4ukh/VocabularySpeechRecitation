@@ -59,6 +59,7 @@ namespace PureMVC.Interfaces
         object ViewComponent { get; set; }
 
         /// <summary>
+        /// 感興趣的 Notification 們的名稱
         /// List <c>INotification</c> interests.
         /// </summary>
         /// <returns> an <c>Array</c> of the <c>INotification</c> names this <c>IMediator</c> has an interest in.</returns>

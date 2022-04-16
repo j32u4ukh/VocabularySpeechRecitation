@@ -28,6 +28,12 @@ namespace PureMVC.Patterns.Mediator
         /// </remarks>
         public const string NAME = "Mediator";
 
+        /// <summary>the mediator name</summary>
+        public string MediatorName { get; protected set; }
+
+        /// <summary>The view component</summary>
+        public object ViewComponent { get; set; }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -40,6 +46,7 @@ namespace PureMVC.Patterns.Mediator
         }
 
         /// <summary>
+        /// Mediator 感興趣的 Notification 們的名稱
         /// List the <c>INotification</c> names this
         /// <c>Mediator</c> is interested in being notified of.
         /// </summary>
@@ -77,11 +84,5 @@ namespace PureMVC.Patterns.Mediator
         public virtual void OnRemove()
         {
         }
-
-        /// <summary>the mediator name</summary>
-        public string MediatorName { get; protected set; }
-
-        /// <summary>The view component</summary>
-        public object ViewComponent { get; set; }
     }
 }

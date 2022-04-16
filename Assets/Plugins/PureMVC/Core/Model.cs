@@ -12,6 +12,7 @@ using PureMVC.Interfaces;
 namespace PureMVC.Core
 {
     /// <summary>
+    /// Model（資料模型）使用 Proxy 代理物件負責處理資料
     /// A Multiton <c>IModel</c> implementation
     /// </summary>
     /// <remarks>
@@ -32,6 +33,16 @@ namespace PureMVC.Core
     /// <seealso cref="PureMVC.Interfaces.IProxy" />
     public class Model: IModel
     {
+        /// <summary>The Multiton Key for this Core</summary>
+        protected readonly string multitonKey;
+
+        /// <summary>Mapping of proxyNames to IProxy instances</summary>
+        protected readonly ConcurrentDictionary<string, IProxy> proxyMap;
+
+        /// <summary>The Multiton Model instanceMap.</summary>
+        protected static readonly ConcurrentDictionary<string, Lazy<IModel>> InstanceMap = new ConcurrentDictionary<string, Lazy<IModel>>();
+
+        #region Model
         /// <summary>
         /// Constructs and initializes a new model
         /// </summary>
@@ -53,6 +64,26 @@ namespace PureMVC.Core
         }
 
         /// <summary>
+        /// <c>Model</c> Multiton Factory method. 
+        /// </summary>
+        /// <param name="key">Key of model</param>
+        /// <param name="factory">the <c>FuncDelegate</c> of the <c>IModel</c></param>
+        /// <returns>the instance for this Multiton key </returns>
+        public static IModel GetInstance(string key, Func<string, IModel> factory)
+        {
+            return InstanceMap.GetOrAdd(key, new Lazy<IModel>(() => factory(key))).Value;
+        }
+
+        /// <summary>
+        /// Remove an IModel instance
+        /// </summary>
+        /// <param name="key">multitonKey of IModel instance to remove</param>
+        public static void RemoveModel(string key)
+        {
+            InstanceMap.TryRemove(key, out _);
+        }
+
+        /// <summary>
         /// Initialize the Multiton <c>Model</c> instance.
         /// </summary>
         /// <remarks>
@@ -66,18 +97,9 @@ namespace PureMVC.Core
         protected virtual void InitializeModel()
         {
         }
+        #endregion
 
-        /// <summary>
-        /// <c>Model</c> Multiton Factory method. 
-        /// </summary>
-        /// <param name="key">Key of model</param>
-        /// <param name="factory">the <c>FuncDelegate</c> of the <c>IModel</c></param>
-        /// <returns>the instance for this Multiton key </returns>
-        public static IModel GetInstance(string key, Func<string, IModel> factory)
-        {
-            return InstanceMap.GetOrAdd(key, new Lazy<IModel>(() => factory(key))).Value;
-        }
-
+        #region Proxy
         /// <summary>
         /// Register an <c>IProxy</c> with the <c>Model</c>.
         /// </summary>
@@ -87,6 +109,16 @@ namespace PureMVC.Core
             proxy.InitializeNotifier(multitonKey);
             proxyMap[proxy.ProxyName] = proxy;
             proxy.OnRegister();
+        }
+
+        /// <summary>
+        /// Check if a Proxy is registered
+        /// </summary>
+        /// <param name="proxyName"></param>
+        /// <returns>whether a Proxy is currently registered with the given <c>proxyName</c>.</returns>
+        public virtual bool HasProxy(string proxyName)
+        {
+            return proxyMap.ContainsKey(proxyName);
         }
 
         /// <summary>
@@ -112,33 +144,6 @@ namespace PureMVC.Core
             }
             return proxy;
         }
-
-        /// <summary>
-        /// Check if a Proxy is registered
-        /// </summary>
-        /// <param name="proxyName"></param>
-        /// <returns>whether a Proxy is currently registered with the given <c>proxyName</c>.</returns>
-        public virtual bool HasProxy(string proxyName)
-        {
-            return proxyMap.ContainsKey(proxyName);
-        }
-
-        /// <summary>
-        /// Remove an IModel instance
-        /// </summary>
-        /// <param name="key">multitonKey of IModel instance to remove</param>
-        public static void RemoveModel(string key)
-        {
-            InstanceMap.TryRemove(key, out _);
-        }
-
-        /// <summary>The Multiton Key for this Core</summary>
-        protected readonly string multitonKey;
-
-        /// <summary>Mapping of proxyNames to IProxy instances</summary>
-        protected readonly ConcurrentDictionary<string, IProxy> proxyMap;
-
-        /// <summary>The Multiton Model instanceMap.</summary>
-        protected static readonly ConcurrentDictionary<string, Lazy<IModel>> InstanceMap = new ConcurrentDictionary<string, Lazy<IModel>>();
+        #endregion
     }
 }

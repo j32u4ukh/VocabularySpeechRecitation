@@ -40,6 +40,9 @@ namespace PureMVC.Patterns.Command
     /// <seealso cref="PureMVC.Patterns.Command.SimpleCommand"/>
     public class MacroCommand : Notifier, ICommand
     {
+        /// <summary>List of subcommands</summary>
+        public readonly IList<Func<ICommand>> subcommands;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -125,8 +128,5 @@ namespace PureMVC.Patterns.Command
                 subcommands.RemoveAt(0);
             }
         }
-
-        /// <summary>List of subcommands</summary>
-        public readonly IList<Func<ICommand>> subcommands;
     }
 }
