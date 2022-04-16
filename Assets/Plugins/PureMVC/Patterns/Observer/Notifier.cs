@@ -48,7 +48,7 @@ namespace PureMVC.Patterns.Observer
     /// <seealso cref="PureMVC.Patterns.Mediator.Mediator"/>
     /// <seealso cref="PureMVC.Patterns.Command.MacroCommand"/>
     /// <seealso cref="PureMVC.Patterns.Command.SimpleCommand"/>
-    public class Notifier: INotifier
+    public class Notifier : INotifier
     {
         /// <summary> Return the Multiton Facade instance</summary>
         protected IFacade Facade
@@ -84,6 +84,7 @@ namespace PureMVC.Patterns.Observer
         }
 
         /// <summary>
+        /// 初始化 Notifier 所對應的 Facade 的 multitonKey，因為 PureMVC 允許有多個 Facade
         /// Initialize this INotifier instance.
         /// </summary>
         /// <remarks>

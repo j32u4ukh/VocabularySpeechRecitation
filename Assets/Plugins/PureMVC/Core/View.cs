@@ -36,10 +36,11 @@ namespace PureMVC.Core
         /// <summary>The Multiton Key for this Core</summary>
         protected readonly string multitonKey;
 
+        // Key: mediator 名稱, Value: mediator
         /// <summary>Mapping of Mediator names to Mediator instances</summary>
         protected readonly ConcurrentDictionary<string, IMediator> mediatorMap;
 
-        // Key: Notification 名稱, Value:
+        // Key: Notification 名稱, Value: 接收到此通知時將觸發的函式們(可能是 Mediator 的 HandleNotification，也可能是 Command 的 Execute)
         /// <summary>Mapping of Notification names to Observer lists</summary>
         protected readonly ConcurrentDictionary<string, IList<IObserver>> observerMap;
 

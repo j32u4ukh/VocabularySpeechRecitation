@@ -38,7 +38,7 @@ namespace PureMVC.Patterns.Proxy
         public const string NAME = "Proxy";
 
         /// <summary>the proxy name</summary>
-        public string ProxyName { get; protected set; }
+        public string ProxyName { get; protected set; } 
 
         /// <summary>the proxy name</summary>
         public object Data { get; set; }

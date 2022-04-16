@@ -148,6 +148,7 @@ namespace PureMVC.Core
             {
                 view.RegisterObserver(notificationName, new Observer(ExecuteCommand, this));
             }
+
             commandMap[notificationName] = factory;
         }
 
@@ -161,7 +162,11 @@ namespace PureMVC.Core
             if (commandMap.TryGetValue(notification.Name, out var factory))
             {
                 var commandInstance = factory();
+
+                // INotifier
                 commandInstance.InitializeNotifier(multitonKey);
+
+                // ICommand
                 commandInstance.Execute(notification);
             }
         }
