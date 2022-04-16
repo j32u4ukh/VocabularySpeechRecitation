@@ -1,0 +1,2 @@
+# VocabularySpeechRecitation
+用聽的方式來背單字
