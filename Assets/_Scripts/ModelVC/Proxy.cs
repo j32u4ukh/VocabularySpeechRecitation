@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,15 +7,15 @@ namespace vts.mvc
     public abstract class Proxy : PureMVC.Patterns.Proxy.Proxy
     {
         /// <summary>
-        /// ¥²¶·¼g«Øºc¨ç¦¡¡A¦b«Øºc¨ç¦¡¤¤¥²¶·©I¥s¤÷Ãşªº«Øºc¨ç¦¡¡AProxy¤¤¥u´£¨Ñ¤F¤@­Ó¦³°Ñºc³y
-        /// ¥i¥H¦b«Øºc¨ç¦¡¤¤±q¥~³¡¶Ç¤J¸ê®Ædata¨Ï¥Î¡A¤]¥i¥H¦b«Øºc¨ç¦¡¤¤ªì©l¤Æ¸ê®Æ
+        /// å¿…é ˆå¯«å»ºæ§‹å‡½å¼ï¼Œåœ¨å»ºæ§‹å‡½å¼ä¸­å¿…é ˆå‘¼å«çˆ¶é¡çš„å»ºæ§‹å‡½å¼ï¼ŒProxyä¸­åªæä¾›äº†ä¸€å€‹æœ‰åƒæ§‹é€ 
+        /// å¯ä»¥åœ¨å»ºæ§‹å‡½å¼ä¸­å¾å¤–éƒ¨å‚³å…¥è³‡æ–™dataä½¿ç”¨ï¼Œä¹Ÿå¯ä»¥åœ¨å»ºæ§‹å‡½å¼ä¸­åˆå§‹åŒ–è³‡æ–™
         /// </summary>
-        public Proxy(string proxyName = null, object data = null) : base(proxyName: NAME, data: data)
+        public Proxy(string proxy_name, object data = null) : base(proxyName: proxy_name, data: data)
         {
-            ProxyName = proxyName ?? this.GetType().Name;
+            
         }
 
-        #region ÂĞ¼g PureMVC.Patterns.Proxy.Proxy
+        #region è¦†å¯« PureMVC.Patterns.Proxy.Proxy
         /// <summary>
         /// Called by the Model when the Proxy is registered
         /// </summary>

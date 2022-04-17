@@ -1,3 +1,4 @@
+ï»¿using FantomLib;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -6,6 +7,28 @@ namespace vts
 {
     public class Utils
     {
+        /// <summary>
+        /// å¯åƒè€ƒ AndroidLocale.cs çš„ ConstantValuesï¼Œæˆ– http://fantom1x.blog130.fc2.com/blog-entry-295.html
+        /// </summary>
+        public readonly static Dictionary<SystemLanguage, string> language_codes = new Dictionary<SystemLanguage, string>()
+        {
+            { SystemLanguage.ChineseTraditional, AndroidLocale.Taiwan },
+            { SystemLanguage.English, AndroidLocale.English },
+            { SystemLanguage.Japanese, AndroidLocale.Japanese }
+        };
+
+        /// <summary>
+        /// å˜—è©¦å–å¾—èªè¨€ä»£ç¢¼(ISO 639)ï¼Œè‹¥æœªåœ¨åˆ—è¡¨ä¸­ï¼Œå‰‡è¿”å› null
+        /// </summary>
+        /// <param name="language">æ¬²æŸ¥è©¢çš„èªè¨€</param>
+        /// <returns></returns>
+        public static string getLanguageCode(SystemLanguage language)
+        {
+            language_codes.TryGetValue(key: language, out string code);
+
+            return code;
+        }
+
         public static IEnumerable<string> iterEnumArray<T>(params T[] enums)
         {
             foreach(T @enum in enums)
@@ -14,13 +37,16 @@ namespace vts
             }
         }
 
-        #region µLªkÂÇ¥ÑÂIÀ» Editor log ¸õ¨ì¹ê»Ú¸}¥»¦ì¸m
-        /* ¥H¤UÄİ©Ê¥u¯à¸m©ó°Ñ¼Æ¦ì¸m¡A¤£¯à©ó¨ç¦¡¤º©I¥s
-         * CallerLineNumber: ¹ê»Ú©I¥sªº¦æ¼Æ¦ì¸m
-         * CallerMemberName: ¹ê»Ú©I¥sªº¨ç¼Æ¦WºÙ
-         * CallerFilePath: ¹ê»Ú©I¥sªº¸}¥»¸ô®|
-         * °Ñ¦Òºô¯¸: https://stackoverflow.com/questions/12556767/how-do-i-get-the-current-line-number
-         */
+        #region ç„¡æ³•è—‰ç”±é»æ“Š Editor log è·³åˆ°å¯¦éš›è…³æœ¬ä½ç½®
+        /// <summary>
+        /// CallerLineNumberã€CallerMemberNameã€CallerFilePath ç­‰å±¬æ€§åªèƒ½ç½®æ–¼åƒæ•¸ä½ç½®ï¼Œä¸èƒ½æ–¼å‡½å¼å…§å‘¼å«
+        /// åƒè€ƒç¶²ç«™: https://stackoverflow.com/questions/12556767/how-do-i-get-the-current-line-number
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="line_num"> CallerLineNumber: å¯¦éš›å‘¼å«çš„è¡Œæ•¸ä½ç½® </param>
+        /// <param name="member"> CallerMemberName: å¯¦éš›å‘¼å«çš„å‡½æ•¸åç¨± </param>
+        /// <param name="file_path"> CallerFilePath: å¯¦éš›å‘¼å«çš„è…³æœ¬è·¯å¾‘ </param>
+        /// <returns></returns>
         static string debugMessage(string message, int line_num, string member, string file_path)
         {
             string[] split_path = file_path.Split('\\');

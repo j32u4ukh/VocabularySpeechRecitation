@@ -1,23 +1,38 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using vts.mvc;
 
-/// <summary>
-/// Activity¡A«ù¦³ UI ªº¦UºØ±±¨î¤¸¥ó¡A´£¨Ñ¤@¨Ç§ó·sÅã¥Üµ¥¤èªk¨Ñ¥~¬É©I¥s¡AÄİ©ó MVC ªº V¡C
-/// ª`·N¡GActivity ÃşÄ~©Ó MonoBehaviour Ãş¡A¬O±¾¸ü¦b¥Ö½§¤Wªº«ü¥O½X¡FPureMVC ¤¤¤]¦³¤@­Ó View Ãş¡A³o­ÓÃşÄ~©Ó¦Û IView ¤¶­±¡A
-/// ¨Ï¥Î®Ø¬[®É¤£·|¯A¤Î¨ì View Ãş¡F³o¸Ìªº Activity ©M View Ãş¨Ã¤£¬Û¦P¡C
-/// </summary>
-public class MainActivity : MonoBehaviour
+namespace vts
 {
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Activityï¼ŒæŒæœ‰ UI çš„å„ç¨®æ§åˆ¶å…ƒä»¶ï¼Œæä¾›ä¸€äº›æ›´æ–°é¡¯ç¤ºç­‰æ–¹æ³•ä¾›å¤–ç•Œå‘¼å«ï¼Œå±¬æ–¼ MVC çš„ Vã€‚
+    /// æ³¨æ„ï¼šActivity é¡ç¹¼æ‰¿ MonoBehaviour é¡ï¼Œæ˜¯æ›è¼‰åœ¨çš®è†šä¸Šçš„æŒ‡ä»¤ç¢¼ï¼›PureMVC ä¸­ä¹Ÿæœ‰ä¸€å€‹ View é¡ï¼Œé€™å€‹é¡ç¹¼æ‰¿è‡ª IView ä»‹é¢ï¼Œ
+    /// ä½¿ç”¨æ¡†æ¶æ™‚ä¸æœƒæ¶‰åŠåˆ° View é¡ï¼›é€™è£¡çš„ Activity å’Œ View é¡ä¸¦ä¸ç›¸åŒã€‚
+    /// </summary>
+    public class MainActivity : MonoBehaviour
     {
-        
-    }
+        [SerializeField] Transform content;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        ScrollWordsMediator scroll_words_mediator;
+        VocabularyProxy vocabulary_proxy;
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            AppFacade.getInstance().init();
+
+            scroll_words_mediator = new ScrollWordsMediator(mediator_name: MediatorName.ScrollWords1, content: content);
+            AppFacade.getInstance().registerMediator(scroll_words_mediator);
+
+            vocabulary_proxy = new VocabularyProxy(proxy_name: ProxyName.VocabularyProxy, language: SystemLanguage.English, table_number: 1);
+            AppFacade.getInstance().registerProxy(proxy: vocabulary_proxy);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }

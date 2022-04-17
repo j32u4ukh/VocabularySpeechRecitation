@@ -295,7 +295,9 @@ namespace FantomLib
                     SetPitch(sPitch);   //Restore, because it was "Release()"
 
                     if (saveSetting)
+                    {
                         SavePrefs();
+                    }
                 }
             }
         }
@@ -333,14 +335,23 @@ namespace FantomLib
         public void InitializeTextToSpeech()
         {
             ResetInitializeStatus();
-//#if UNITY_EDITOR
-//            Debug.Log("InitTextToSpeech");
-//#elif UNITY_ANDROID
+
+#if UNITY_EDITOR
+            Debug.Log("InitTextToSpeech");
+
+#elif UNITY_ANDROID
+            // Get a initialization status
             if (string.IsNullOrEmpty(locale))
-                AndroidPlugin.InitTextToSpeech(gameObject.name, "ReceiveStatus"); //Get a initialization status
-            else
-                AndroidPlugin.InitTextToSpeech(locale, gameObject.name, "ReceiveStatus"); //Get a initialization status
-//#endif
+            {
+                AndroidPlugin.InitTextToSpeech(gameObject.name, "ReceiveStatus");
+            }
+
+            // Get a initialization status
+            else 
+            {
+                AndroidPlugin.InitTextToSpeech(locale, gameObject.name, "ReceiveStatus");
+            }
+#endif
         }
 
         //Start Text To Speech

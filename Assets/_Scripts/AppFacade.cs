@@ -63,7 +63,12 @@ namespace vts.mvc
         public void registerProxy(PureMVC.Interfaces.IProxy proxy)
         {
             RegisterProxy(proxy);
-        } 
+        }
+
+        public PureMVC.Interfaces.IProxy getProxy(string proxy_name)
+        {
+            return RetrieveProxy(proxy_name);
+        }
         #endregion
 
         #region View

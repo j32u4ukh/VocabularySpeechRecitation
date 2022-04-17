@@ -12,8 +12,6 @@ namespace vts.mvc
         public Mediator(string mediator_name = null, object component = null) : base(mediatorName: NAME, viewComponent: component)
         {
             MediatorName = mediator_name ?? this.GetType().Name;
-
-            AppFacade.getInstance().registerMediator(this);
         }
 
         #region PureMVC.Patterns.Mediator.Mediator
@@ -37,7 +35,8 @@ namespace vts.mvc
 
             for(int i = 0; i < len; i++)
             {
-                interests[i] = notifications.ToString();
+                Utils.log($"interests: {notifications[i]}");
+                interests[i] = notifications[i].ToString();
             }
 
             return interests;

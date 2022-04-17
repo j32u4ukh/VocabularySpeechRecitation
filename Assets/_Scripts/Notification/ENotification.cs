@@ -7,6 +7,9 @@
     {
         Init,
 
+        // 單字載入完成
+        VocabularyLoaded,
+
         // ======
         None,
         Free
