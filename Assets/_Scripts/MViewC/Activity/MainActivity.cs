@@ -12,21 +12,12 @@ namespace vts
     /// </summary>
     public class MainActivity : MonoBehaviour
     {
-        [SerializeField] Transform content;
-
-        ScrollWordsMediator scroll_words_mediator;
-        VocabularyProxy vocabulary_proxy;
+        public Transform content;
 
         // Start is called before the first frame update
         void Start()
         {
-            AppFacade.getInstance().init();
-
-            scroll_words_mediator = new ScrollWordsMediator(mediator_name: MediatorName.ScrollWords1, content: content);
-            AppFacade.getInstance().registerMediator(scroll_words_mediator);
-
-            vocabulary_proxy = new VocabularyProxy(proxy_name: ProxyName.VocabularyProxy, language: SystemLanguage.English, table_number: 1);
-            AppFacade.getInstance().registerProxy(proxy: vocabulary_proxy);
+            AppFacade.getInstance().init(this);
         }
 
         // Update is called once per frame

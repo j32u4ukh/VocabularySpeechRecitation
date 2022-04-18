@@ -51,8 +51,8 @@ namespace vts
                 {
                     string[] content = contents[i].Split(',');
 
-                    vocabularies.Add(new VocabularyNorm(vocabulary: content[0], description: content[1]));
-                    dictionary.Add(content[0], content[1]);
+                    vocabularies.Add(new VocabularyNorm(vocabulary: content[0].Trim(), description: content[1].Trim()));
+                    dictionary.Add(content[0].Trim(), content[1].Trim());
                 }
                 catch (IndexOutOfRangeException)
                 {

@@ -8,9 +8,7 @@ namespace vts
 {
     public class MainActivityMediator : Mediator
     {
-        GameObject obj;
-
-        public MainActivityMediator(GameObject obj) : base(mediator_name: null, component: obj)
+        public MainActivityMediator(string mediator_name, object component) : base(mediator_name: mediator_name, component: component)
         {
           
         }
@@ -26,7 +24,6 @@ namespace vts
             switch (notification.Name)
             {
                 default:
-                    Debug.Log(obj.name);
                     break;
             }
         }

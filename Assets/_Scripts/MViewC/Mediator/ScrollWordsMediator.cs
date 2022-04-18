@@ -44,7 +44,10 @@ namespace vts
 
         public override void onRegister()
         {
-
+            AppFacade.getInstance().registerCommand(ENotification.Speak, () =>
+            {
+                return new SpeakCommand();
+            });
         }
 
         public override void onRemove()
@@ -56,17 +59,24 @@ namespace vts
         {
             VocabularyProxy vocabulary_proxy = AppFacade.getInstance().getProxy(proxy_name: ProxyName.VocabularyProxy) as VocabularyProxy;
             SystemLanguage target = vocabulary_proxy.getLanguage(), describe = SystemLanguage.ChineseTraditional;
+            Transform child;
+            Text label;
             Button button;
 
             for (int i = 0; i < content.childCount; i++)
             {
-                button = content.GetChild(index: i).GetComponent<Button>();
+                child = content.GetChild(index: i);
                 VocabularyNorm vocab = vocabulary_proxy.getVocabulary(index: i);
+                label = child.GetComponentInChildren(typeof(Text)) as Text;
+                label.text = $"{vocab.vocabulary} {vocab.description}";
+
                 Utils.log($"Setting button({i}) vocabulary: {vocab.vocabulary}, description: {vocab.description}");
+                button = child.GetComponent<Button>();
 
                 button.onClick.AddListener(()=> 
                 {
-                    SpeechManager.getInstance().startReciteContent(vocab: vocab, target: target, describe: describe);
+                    // TODO: 將要使用的語言隨著 vocab 一起傳過去
+                    AppFacade.getInstance().sendNotification(ENotification.Speak, body: vocab);
                 });
             }
         }

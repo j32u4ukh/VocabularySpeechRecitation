@@ -10,6 +10,9 @@
         // 單字載入完成
         VocabularyLoaded,
 
+        // 念單字(與它的說明)
+        Speak,
+
         // ======
         None,
         Free

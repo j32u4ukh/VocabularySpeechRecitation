@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,15 +6,15 @@ using UnityEngine;
 namespace vts.mvc
 {
     /// <summary>
-    /// PureMVC ªº°ò¥»¨Ï¥Îªº©I¥s¬yµ{®Ş²z
-    /// 1. ©w¸q¦Û¤vªº Facade Ãş¡AÄ~©Ó Facade Ãş¡A´£¨Ñ³o­ÓÃşªº³æ¨Ò¼Ò¦¡Äİ©Ê Instance
-    /// 2. ¨Ï¥Î¦Û¤vªº Facade Ãşª«¥óªº SendNotification ¤èªk¶Ç°e³qª¾¡A¹ï³o­Ó¤èªk¶i¦æ«Ê¸Ë¡C
-    /// 3. ¤@©w¦s¦b¤@­Óµù¥U³qª¾ªº¨ç¦¡¡A§_«h¦Û¤v©w¸qªº³qª¾µLªk°õ¦æ¡C¦b¦Û¤v©w¸qªº Facade ¨ç¦¡¤¤­«¼g InitializeController ¤èªk¡A¦b³o­Ó¤èªk¤¤©I¥s RegisterCommand ¨ç¦¡µù¥U³qª¾¡C
-    /// 4. ©w¸q­è¤~µù¥U³qª¾®Éªğ¦^ªº Command Ãş¡C¦Û©w¸qªº Command ÃşÄ~©Ó¦Û SimpleCommand Ãş©ÎªÌ MacroCommand Ãş¡]³£¹ê²{¤F ICommand ¤¶­±¡^¡C
-    ///    SimpleCommand ¥²¶·­«¼g Execute ¤èªk¡A·í«e Command »İ­n°õ¦æªºÅŞ¿èµ{¦¡½X´N©w¸q¦b³o­Ó¤èªk¤¤¡F
-    ///    MacroCommand ¥²¶·­«¼g InitializeMacroCommand ¤èªk¡A¥¦«ù¦³¤@­Ó IList<Func<ICommand>> «¬§Oªº subCommands ÅÜ¼Æ¡A
-    ///    MacroCommand ¥i¥H«ù¦³¦h­Ó SimpleCommand ©ÎªÌ MacroCommand¡A³£Àx¦s¦b subCommands ÅÜ¼Æ¤¤¡A¥¦ªº Execute ¤èªk¤w¸g©w¸q¦n¤F¤£¥Î­«¼g¡A
-    ///    Execute ¨ç¦¡·|¨Ì¦¸°õ¦æ¨ä«ù¦³ªº©Ò¦³ SimpleCommand ©M MacroCommand¡A¦b InitializeMacroCommand ¤èªk¤¤³q¹L AddSubCommand ¤èªk±N Command ¥[¤J subCommands ÅÜ¼Æ§Y¥i¡C
+    /// PureMVC çš„åŸºæœ¬ä½¿ç”¨çš„å‘¼å«æµç¨‹æ¢³ç†
+    /// 1. å®šç¾©è‡ªå·±çš„ Facade é¡ï¼Œç¹¼æ‰¿ Facade é¡ï¼Œæä¾›é€™å€‹é¡çš„å–®ä¾‹æ¨¡å¼å±¬æ€§ Instance
+    /// 2. ä½¿ç”¨è‡ªå·±çš„ Facade é¡ç‰©ä»¶çš„ SendNotification æ–¹æ³•å‚³é€é€šçŸ¥ï¼Œå°é€™å€‹æ–¹æ³•é€²è¡Œå°è£ã€‚
+    /// 3. ä¸€å®šå­˜åœ¨ä¸€å€‹è¨»å†Šé€šçŸ¥çš„å‡½å¼ï¼Œå¦å‰‡è‡ªå·±å®šç¾©çš„é€šçŸ¥ç„¡æ³•åŸ·è¡Œã€‚åœ¨è‡ªå·±å®šç¾©çš„ Facade å‡½å¼ä¸­é‡å¯« InitializeController æ–¹æ³•ï¼Œåœ¨é€™å€‹æ–¹æ³•ä¸­å‘¼å« RegisterCommand å‡½å¼è¨»å†Šé€šçŸ¥ã€‚
+    /// 4. å®šç¾©å‰›æ‰è¨»å†Šé€šçŸ¥æ™‚è¿”å›çš„ Command é¡ã€‚è‡ªå®šç¾©çš„ Command é¡ç¹¼æ‰¿è‡ª SimpleCommand é¡æˆ–è€… MacroCommand é¡ï¼ˆéƒ½å¯¦ç¾äº† ICommand ä»‹é¢ï¼‰ã€‚
+    ///    SimpleCommand å¿…é ˆé‡å¯« Execute æ–¹æ³•ï¼Œç•¶å‰ Command éœ€è¦åŸ·è¡Œçš„é‚è¼¯ç¨‹å¼ç¢¼å°±å®šç¾©åœ¨é€™å€‹æ–¹æ³•ä¸­ï¼›
+    ///    MacroCommand å¿…é ˆé‡å¯« InitializeMacroCommand æ–¹æ³•ï¼Œå®ƒæŒæœ‰ä¸€å€‹ IList<Func<ICommand>> å‹åˆ¥çš„ subCommands è®Šæ•¸ï¼Œ
+    ///    MacroCommand å¯ä»¥æŒæœ‰å¤šå€‹ SimpleCommand æˆ–è€… MacroCommandï¼Œéƒ½å„²å­˜åœ¨ subCommands è®Šæ•¸ä¸­ï¼Œå®ƒçš„ Execute æ–¹æ³•å·²ç¶“å®šç¾©å¥½äº†ä¸ç”¨é‡å¯«ï¼Œ
+    ///    Execute å‡½å¼æœƒä¾æ¬¡åŸ·è¡Œå…¶æŒæœ‰çš„æ‰€æœ‰ SimpleCommand å’Œ MacroCommandï¼Œåœ¨ InitializeMacroCommand æ–¹æ³•ä¸­é€šé AddSubCommand æ–¹æ³•å°‡ Command åŠ å…¥ subCommands è®Šæ•¸å³å¯ã€‚
     /// </summary>
     public class AppFacade : PureMVC.Patterns.Facade.Facade
     {
@@ -25,22 +25,22 @@ namespace vts.mvc
 
         }
 
-        // ¦³¬İ¨ì¦³ªº¼gªk¬Oªğ¦^ IFacade¡A¤£ª¾¹D¦³¤°»òÀu¯ÊÂI¡H
+        // æœ‰çœ‹åˆ°æœ‰çš„å¯«æ³•æ˜¯è¿”å› IFacadeï¼Œä¸çŸ¥é“æœ‰ä»€éº¼å„ªç¼ºé»ï¼Ÿ
         public static AppFacade getInstance()
         {
             return GetInstance(KEY, key => new AppFacade()) as AppFacade;
         }
 
         /// <summary>
-        /// ªì©l¤Æcontroller¬ÛÃö¤º®e
+        /// åˆå§‹åŒ–controllerç›¸é—œå…§å®¹
         /// </summary>
         protected override void InitializeController()
         {
-            //¥i¥H«O¯d¡A¤÷Ãş¤¤ªì©l¤Æ®Énew¤F¤@­Ócontroller
+            //å¯ä»¥ä¿ç•™ï¼Œçˆ¶é¡ä¸­åˆå§‹åŒ–æ™‚newäº†ä¸€å€‹controller
             base.InitializeController();
 
-            // ©R¥O©M³qª¾Ã´µ²ªºÅŞ¿è
-            // µù¥U³qª¾¡AÃş¦ü©ó©e°U¡A¦b¨ç¦¡¤¤ªğ¦^¤@­Ó©R¥O¡A
+            // å‘½ä»¤å’Œé€šçŸ¥ç¹«çµçš„é‚è¼¯
+            // è¨»å†Šé€šçŸ¥ï¼Œé¡ä¼¼æ–¼å§”è¨—ï¼Œåœ¨å‡½å¼ä¸­è¿”å›ä¸€å€‹å‘½ä»¤ï¼Œ
             registerCommand(ENotification.Init, () =>
             {
                 return new InitCommand();
@@ -48,11 +48,11 @@ namespace vts.mvc
         }
 
         /// <summary>
-        /// ±Ò°Ê©R¥Oªº¨ç¦¡¡A¨ä¥L¨ç¦¡©I¥s³o­Ó¨ç¦¡±Ò°Ê©R¥O
+        /// å•Ÿå‹•å‘½ä»¤çš„å‡½å¼ï¼Œå…¶ä»–å‡½å¼å‘¼å«é€™å€‹å‡½å¼å•Ÿå‹•å‘½ä»¤
         /// </summary>
-        public void init()
+        public void init(MainActivity main)
         {
-            sendNotification(ENotification.Init);
+            sendNotification(ENotification.Init, body: main);
         }
 
         #region Model
