@@ -19,11 +19,5 @@ namespace vts
         {
             AppFacade.getInstance().init(this);
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

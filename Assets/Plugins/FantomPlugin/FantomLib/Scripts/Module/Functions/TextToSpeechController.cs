@@ -140,20 +140,28 @@ namespace FantomLib
 #endif
         }
 
-        //The currently (default) speech speed.
-        //･If saveValue is true, it will be automatically saved.
+        // 數值設定範圍: 0.5f ~ 2.0f
+        // The currently (default) speech speed.
+        // If saveValue is true, it will be automatically saved.
         public float Speed {
             get { return sSpeed; }
             set {
-                float oldSpeed = sSpeed;    //For check the change of value.
+                // For check the change of value.
+                float oldSpeed = sSpeed;  
+                
                 SetSpeed(value);
+
                 if (oldSpeed != sSpeed)
                 {
-                    if (OnSpeedChanged != null)
+                    if (OnSpeedChanged != null) 
+                    {
                         OnSpeedChanged.Invoke(sSpeed);
+                    }
 
                     if (saveSetting)
+                    {
                         SavePrefs();
+                    }
                 }
             }
         }

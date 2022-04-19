@@ -1,10 +1,6 @@
 ﻿using PureMVC.Interfaces;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using vts.mvc;
 
-namespace vts
+namespace vts.mvc
 {
     public class MainActivityMediator : Mediator
     {

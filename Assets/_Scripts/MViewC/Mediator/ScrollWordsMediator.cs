@@ -1,15 +1,10 @@
 ﻿using PureMVC.Interfaces;
-using SpeechLib;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using vts.mvc;
 
-namespace vts
+namespace vts.mvc
 {
-
     public class ScrollWordsMediator : Mediator
     {
         Transform content;
