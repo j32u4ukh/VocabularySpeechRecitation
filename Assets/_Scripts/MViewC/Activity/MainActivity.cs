@@ -13,11 +13,19 @@ namespace vts
     public class MainActivity : MonoBehaviour
     {
         public Transform content;
+        public GameObject reporter;
 
         // Start is called before the first frame update
         void Start()
         {
-            AppFacade.getInstance().init(this);
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+            reporter.SetActive(true);
+#else
+            reporter.SetActive(false);
+#endif
+
+            //AppFacade.getInstance().init(this);
         }
     }
 }

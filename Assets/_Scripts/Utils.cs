@@ -13,6 +13,7 @@ namespace vts
         public readonly static Dictionary<SystemLanguage, string> language_codes = new Dictionary<SystemLanguage, string>()
         {
             { SystemLanguage.ChineseTraditional, AndroidLocale.Taiwan },
+            { SystemLanguage.Chinese, AndroidLocale.Taiwan },
             { SystemLanguage.English, AndroidLocale.English },
             { SystemLanguage.Japanese, AndroidLocale.Japanese }
         };

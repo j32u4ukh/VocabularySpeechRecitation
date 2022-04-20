@@ -336,7 +336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1908624318804832, guid: d25efbcf6086225498acfe63315b3c60, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4226116137107048, guid: d25efbcf6086225498acfe63315b3c60, type: 3}
       propertyPath: m_RootOrder
@@ -853,6 +853,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 1830515508}
+  reporter: {fileID: 1613024547}
 --- !u!1 &735412846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,7 +1431,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 991031045}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99364775
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1503,6 +1504,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 235747147}
+  buttons:
+  - {fileID: 1495035483}
+  - {fileID: 189035015}
+  - {fileID: 618540764}
+  - {fileID: 1301292022}
+  - {fileID: 325761902}
+  - {fileID: 860469865}
 --- !u!4 &1149238183
 Transform:
   m_ObjectHideFlags: 0
@@ -2230,7 +2238,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00068745983}
+  m_AnchoredPosition: {x: 0, y: -0.00004285866}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1830515509

@@ -268,13 +268,19 @@ namespace FantomLib
         private string initializeStatus = "";    //initialize status message
 
         //Initialization succeeded (Always false before initialization).
-        public bool IsInitializeSuccess {
-            get { return (initialized == 1); }
+        public bool IsInitializeSuccess 
+        {
+            get { 
+                return initialized == 1; 
+            }
         }
 
         //Status message when initialized
-        public string InitializeStatus {
-            get { return initializeStatus; }
+        public string InitializeStatus 
+        {
+            get { 
+                return initializeStatus; 
+            }
         }
 
         //Return to the status status that has not been initialized yet.
@@ -319,27 +325,21 @@ namespace FantomLib
             sSpeed = speed;     //from inspector setting
             sPitch = pitch;     //from inspector setting
 
+            // If the locale is changed, 'InitializeTextToSpeech()' is called.
             if (saveSetting)
-                LoadPrefs();    //If the locale is changed, 'InitializeTextToSpeech()' is called.
+            {
+                LoadPrefs();
+            }
 
-            if (initialized == -1)  //not yet
+            // not yet
+            if (initialized == -1) 
+            {
                 InitializeTextToSpeech();
+            }
         }
 
-        private void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        //private void Update()
-        //{
-
-        //}
-
-
-        //Initialize Text To Speech
-        //Note: The result is returned to the status callback.
+        // Initialize Text To Speech
+        // Note: The result is returned to the status callback.
         public void InitializeTextToSpeech()
         {
             ResetInitializeStatus();
@@ -366,7 +366,10 @@ namespace FantomLib
         public void StartSpeech(string text)
         {
             if (string.IsNullOrEmpty(text) || !IsInitializeSuccess)
+            {
                 return;
+            }
+                
 #if UNITY_EDITOR
             Debug.Log("TextToSpeechController.StartSpeech : text = " + text);
 #elif UNITY_ANDROID
