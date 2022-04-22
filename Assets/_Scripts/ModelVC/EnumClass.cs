@@ -15,7 +15,7 @@
 
 public enum State
 {
-    None,
+    Idle,
 
     // 狀態改變完成
     Status,

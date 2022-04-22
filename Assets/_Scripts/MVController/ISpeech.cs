@@ -3,15 +3,15 @@ namespace vts
     public interface ISpeech
     {
         //Receive status message from callback
-        public void onStatus(string message);
+        public void onStatusListener(string message);
 
         //Callback handler for start speaking
-        public void onStart();
+        public void onStartListener();
 
         //Callback handler for finish speaking
-        public void onDone();
+        public void onDoneListener();
 
         //Callback handler for interrupt speaking
-        public void onStop(string message);
+        public void onStopListener(string message);
     }
 }

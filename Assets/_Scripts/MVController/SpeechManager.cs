@@ -3,7 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using vts.mvc;
 
@@ -13,14 +15,25 @@ namespace vts
     public class SpeechManager : MonoBehaviour, ISpeech
     {
         private static SpeechManager instance = null;
+        private State state = State.Idle;
+
+        float wait_time = 0.01f;
+        float interval_time = 1.0f;
+        float waiting_limit_time = 20.0f;
+        WaitForSeconds wait;
+        WaitForSeconds interval;
 
         #region SpeechLib
         SpVoice voice;
         ISpeechObjectTokens tokens;
+        event Action<string> onStatus;
+        event Action onStart;
+        event Action onDone;
+        event Action<string> onStop;
         #endregion
 
         #region FantomLib
-        [SerializeField] FantomLib.TextToSpeechController controller; 
+        [SerializeField] FantomLib.TextToSpeechController controller;
         #endregion
 
         public Button[] buttons;
@@ -36,84 +49,96 @@ namespace vts
         // Start is called before the first frame update
         void Start()
         {
+            wait = new WaitForSeconds(wait_time);
+            interval = new WaitForSeconds(interval_time);
+
 #if UNITY_EDITOR
             voice = new SpVoice();
             tokens = voice.GetVoices(string.Empty, string.Empty);
             controller.gameObject.SetActive(false);
 
+            onStatus += onStatusListener;
+            onStart += onStartListener;
+            onDone += onDoneListener;
+            onStop += onStopListener;
+
 #elif UNITY_ANDROID
             controller.gameObject.SetActive(true);
 
-            controller.OnStatus.AddListener(onStatus);
-            controller.OnStart.AddListener(onStart);
-            controller.OnDone.AddListener(onDone);
-            controller.OnStop.AddListener(onStop);
+            controller.OnStatus.AddListener(onStatusListener);
+            controller.OnStart.AddListener(onStartListener);
+            controller.OnDone.AddListener(onDoneListener);
+            controller.OnStop.AddListener(onStopListener);
 
+            // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
+            StartCoroutine(preSetLanguage());
 #endif
-            // NOTE: 語言的切換、以及緊鄰呼叫兩次 speak 在 Android 上第二次會中斷第一次的請求，只執行第二次
-            buttons[0].onClick.AddListener(()=> 
+
+            buttons[0].onClick.AddListener(() =>
             {
                 Utils.log("buttons[0]");
 
-                setLanguage(SystemLanguage.ChineseTraditional);
-                speak(content: "分段念誦測試");
-                speak(content: "分、段、念、誦、測、試");
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             ReciteMode.Word));
             });
 
-            buttons[1].onClick.AddListener(()=> 
+            buttons[1].onClick.AddListener(() =>
             {
                 Utils.log("buttons[1]");
 
-                speak(content: "content");
-                speak(content: "c,o,n,t,e,n,t");
+                StartCoroutine(reciteContent(vocabulary: "内容",
+                                             description: "內容",
+                                             target: SystemLanguage.Japanese,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             ReciteMode.Word, ReciteMode.Description));
             });
 
-            buttons[2].onClick.AddListener(()=> 
+            buttons[2].onClick.AddListener(() =>
             {
                 Utils.log("buttons[2]");
 
-                setLanguage(SystemLanguage.Japanese);
-                speak(content: "こ、ん、に、ち、は");
+                StartCoroutine(reciteContent(vocabulary: "内容",
+                                             description: "content",
+                                             target: SystemLanguage.Japanese,
+                                             describe: SystemLanguage.English,
+                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description));
             });
 
-            buttons[3].onClick.AddListener(()=> 
+            buttons[3].onClick.AddListener(() =>
             {
                 Utils.log("buttons[3]");
 
-                setLanguage(SystemLanguage.Chinese);
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "内容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.Japanese,
+                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Word));
             });
 
-            buttons[4].onClick.AddListener(()=> 
+            buttons[4].onClick.AddListener(() =>
             {
                 Utils.log("buttons[4]");
 
-                setLanguage(SystemLanguage.English);
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling));
             });
 
-            buttons[5].onClick.AddListener(()=> 
+            buttons[5].onClick.AddListener(() =>
             {
                 Utils.log("buttons[5]");
 
-                setLanguage(SystemLanguage.Japanese);
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             ReciteMode.Word, ReciteMode.Description, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling));
             });
-
-            string content = "content";
-            string[] split = content.ToCharArray().Select(c => c.ToString()).ToArray();
-
-            foreach (string s in split)
-            {
-                Utils.log(s);
-            }
-
-            string combine2 = string.Join("", split);
-            Utils.log(combine2);
-
-            //StartCoroutine(reciteByMode(ReciteMode.Spelling, content: "content", language: SystemLanguage.English));
-            //StartCoroutine(reciteContent(vocabulary: "content", 
-            //                             description: "內容", 
-            //                             target: SystemLanguage.English, 
-            //                             describe: SystemLanguage.ChineseTraditional,
-            //                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Spelling, ReciteMode.Interval, ReciteMode.Description));
         }
 
         public static SpeechManager getInstance()
@@ -122,26 +147,36 @@ namespace vts
         }
 
         #region 實作 ISpeech
-        public void onStatus(string message)
+        public void onStatusListener(string message)
         {
             Utils.log($"message: {message}");
+            setState(state: State.Status);
         }
 
-        public void onStart()
+        public void onStartListener()
         {
             Utils.log();
+            setState(state: State.Start);
         }
 
-        public void onDone()
+        public void onDoneListener()
         {
             Utils.log();
+            setState(state: State.Done);
         }
 
-        public void onStop(string message)
+        public void onStopListener(string message)
         {
             Utils.log($"message: {message}");
-        } 
+            setState(state: State.Stop);
+        }
         #endregion
+
+        IEnumerator preSetLanguage()
+        {
+            setLanguage(language: SystemLanguage.English);
+            yield return StartCoroutine(waitForRelease());
+        }
 
         /// <summary>
         /// SpVoice
@@ -158,6 +193,7 @@ namespace vts
             Utils.log($"language: {language}");
 
 #if UNITY_EDITOR
+            string lang = language.ToString();
 
             // 會因不同電腦有安裝的語言套件而有所不同，這裡的索引值對應的語言是在我的電腦才成立的，
             // 但本來也就不是要提供電腦版，只是方便測試才讓電腦版也可以發聲
@@ -173,8 +209,11 @@ namespace vts
                 case SystemLanguage.Chinese:
                 default:
                     voice.Voice = tokens.Item(0);
+                    lang = SystemLanguage.Chinese.ToString();
                     break;
             }
+
+            onStatus?.Invoke($"Set language to {lang}");
 
 #elif UNITY_ANDROID
             string language_code = Utils.getLanguageCode(language: language);
@@ -190,20 +229,18 @@ namespace vts
 #endif
         }
 
-        // TODO: 實作說完事件監聽，再播放下一句
         // TODO: 找出兩次說話間隔時間的設定
-        public void speak(string content, float speed = 1.0f)
+        public void speak(string content)
         {
             Utils.log($"content: {content}");
 
 #if UNITY_EDITOR
-            // SpVoice 的語速設定範圍 -10(最慢) ~ 10(最快)
-            // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
-            voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
-
+            onStart?.Invoke();
             voice.Speak(content);
+            onDone?.Invoke();
 
 #elif UNITY_ANDROID
+            setState(state: State.Start);
             controller.StartSpeech(content);
 #endif
         }
@@ -215,9 +252,12 @@ namespace vts
         /// <param name="speed"></param>
         public void setSpeed(float speed)
         {
+            setState(state: State.Idle);
+
 #if UNITY_EDITOR
             // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
             voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
+            onStatus?.Invoke($"Set speed to {voice.Rate}");
 
 #elif UNITY_ANDROID
             controller.Speed = speed;
@@ -226,49 +266,63 @@ namespace vts
 
         public void startReciteContent(VocabularyNorm vocab, SystemLanguage target, SystemLanguage describe = SystemLanguage.ChineseTraditional)
         {
-            StartCoroutine(reciteContent(vocab: vocab, target: target, describe: describe));
-        }
-
-        IEnumerator reciteContent(VocabularyNorm vocab, SystemLanguage target, SystemLanguage describe = SystemLanguage.ChineseTraditional)
-        {
-            setLanguage(language: target);
-            speak(content: vocab.vocabulary);
-            yield return new WaitForSeconds(1.0f);
-
-            setLanguage(language: describe);
-            speak(content: vocab.description);
+            // TODO: 改用新的 reciteContent
         }
 
         IEnumerator reciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, params ReciteMode[] modes)
         {
-            foreach(ReciteMode mode in modes)
+            SystemLanguage language = SystemLanguage.Chinese;
+            string content = string.Empty;
+
+            foreach (ReciteMode mode in modes)
             {
                 switch (mode)
                 {
                     case ReciteMode.Word:
-                        setLanguage(language: target);
-                        speak(content: vocabulary);
+                        language = target;
+                        content = vocabulary;
                         break;
 
                     case ReciteMode.Description:
-                        setLanguage(language: describe);
-                        speak(content: description);
+                        language = describe;
+                        content = description;
                         break;
 
                     case ReciteMode.Spelling:
-                        setLanguage(language: target);
-
-                        //foreach (string s in getSpelling(content: vocabulary, language: target))
-                        //{
-                        //    speak(content: s);
-                        //}
+                        language = target;
+                        content = getSpelling(content: vocabulary, language: target);
                         break;
 
                     case ReciteMode.Interval:
-                        yield return new WaitForSeconds(Config.interval_time);
-                        break;
+                        yield return interval;
+                        continue;
                 }
+
+                setLanguage(language: language);
+                yield return StartCoroutine(waitForRelease());
+
+                speak(content: content);
+                yield return StartCoroutine(waitForRelease());
             }
+        }
+
+        /// <summary>
+        /// 結束等待後，state 一定要重置回 State.Idle，才能確保狀態變化的等待，
+        /// 例如 State.Start 變成 State.Done 表示說話結束。若保持在 State.Done，來不及等待就結束了
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator waitForRelease()
+        {
+            float waiting_time = 0f;
+
+            while ((state != State.Done) && (state != State.Stop) && (state != State.Status) && (waiting_time < waiting_limit_time))
+            {
+                Utils.log($"state: {state}, waiting_time: {waiting_time}");
+                waiting_time += wait_time;
+                yield return wait;
+            }
+
+            setState(state: State.Idle);
         }
 
         IEnumerator reciteByMode(ReciteMode mode, string content = null, SystemLanguage language = SystemLanguage.ChineseTraditional)
@@ -286,31 +340,59 @@ namespace vts
                     speak(content: content);
                     break;
                 case ReciteMode.Spelling:
-                    foreach (string s in getSpelling(content: content, language: language))
-                    {
-                        speak(content: s);
-                    }
+                    speak(content: getSpelling(content: content, language: language));
                     break;
                 case ReciteMode.Interval:
-                    yield return new WaitForSeconds(Config.interval_time);
+                    yield return interval;
                     break;
             }
         }
 
-        IEnumerable<string> getSpelling(string content, SystemLanguage language = SystemLanguage.ChineseTraditional)
+        string getSpelling(string content, SystemLanguage language = SystemLanguage.ChineseTraditional)
         {
+            string[] split = content.ToCharArray().Select(c => c.ToString()).ToArray();
+            string spelling;
+
             switch (language)
             {
                 case SystemLanguage.English:
+                    spelling = string.Join(",", split);
+                    break;
+                case SystemLanguage.Japanese:
+                case SystemLanguage.ChineseTraditional:
+                case SystemLanguage.Chinese:
                 default:
-                    foreach (char c in content)
-                    {
-                        yield return c.ToString();
-                    }
+                    spelling = string.Join("、", split);
                     break;
             }
+
+            return spelling;
         }
 
-        
+        /// <summary>
+        /// 設置等待時間，並更新間隔的秒數物件
+        /// </summary>
+        /// <param name="value"></param>
+        public void setWaitTime(float value)
+        {
+            wait_time = value;
+            wait = new WaitForSeconds(value);
+        }
+
+        /// <summary>
+        /// 設置間隔時間，並更新間隔的秒數物件
+        /// </summary>
+        /// <param name="value"></param>
+        public void setIntervalTime(float value)
+        {
+            interval_time = value;
+            interval = new WaitForSeconds(value);
+        }
+
+        void setState(State state)
+        {
+            Utils.log($"Set state {this.state} -> {state}");
+            this.state = state;
+        }
     }
 }
