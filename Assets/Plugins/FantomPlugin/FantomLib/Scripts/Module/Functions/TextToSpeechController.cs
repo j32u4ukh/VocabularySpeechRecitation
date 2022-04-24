@@ -258,22 +258,8 @@ namespace FantomLib
             // not yet
             if (initialized == -1) 
             {
-                StopSpeech();
-                Release();
-
                 // 初始化
                 InitializeTextToSpeech();
-
-                // Restore, because it was "Release()"
-                SetSpeed(sSpeed);
-
-                // Restore, because it was "Release()"
-                SetPitch(sPitch);
-
-                if (saveSetting)
-                {
-                    SavePrefs();
-                }
             }
         }
 

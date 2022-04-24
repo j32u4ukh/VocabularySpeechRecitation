@@ -35,7 +35,6 @@ namespace vts.mvc
 
             for(int i = 0; i < len; i++)
             {
-                Utils.log($"interests: {notifications[i]}");
                 interests[i] = notifications[i].ToString();
             }
 

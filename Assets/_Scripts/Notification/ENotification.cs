@@ -13,6 +13,12 @@
         // 念單字(與它的說明)
         Speak,
 
+        // 當前單字念完
+        FinishedReading,
+
+        // 前往下一個單字
+        NextWord,
+
         // ======
         None,
         Free

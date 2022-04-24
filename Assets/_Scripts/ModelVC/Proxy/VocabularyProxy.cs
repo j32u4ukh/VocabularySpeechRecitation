@@ -8,8 +8,13 @@ namespace vts
 {
     public class VocabularyProxy : Proxy
     {
-        SystemLanguage language;
-        int table_number;
+        // 目標語言
+        SystemLanguage target;
+
+        // 描述語言
+        SystemLanguage describe;
+
+        string table_name;
 
         List<VocabularyNorm> vocabularies;
 
@@ -20,17 +25,21 @@ namespace vts
         /// 必須寫建構函式，在建構函式中必須呼叫父類的建構函式，Proxy中只提供了一個有參構造
         /// 可以在建構函式中從外部傳入資料data使用，也可以在建構函式中初始化資料
         /// </summary>
-        public VocabularyProxy(string proxy_name, SystemLanguage language, int table_number) : base(proxy_name: proxy_name)
+        public VocabularyProxy(string proxy_name, SystemLanguage target, SystemLanguage describe, string table_name) : base(proxy_name: proxy_name)
         {
             Utils.log($"ProxyName: {ProxyName}");
-            this.language = language;
-            this.table_number = table_number;
+            this.target = target;
+            this.describe = describe;
+            this.table_name = table_name;
         }
 
+        #region Life cycle
         public override void onRegister()
         {
-            string language_code = Utils.getLanguageCode(language: language);
-            string path = $"vocabulary/{language_code}/table{table_number}";
+            string target_code = Utils.getLanguageCode(language: target);
+            string describe_code = Utils.getLanguageCode(language: describe);
+
+            string path = $"vocabulary/{target_code}/{describe_code}/{table_name}";
             Utils.log($"path: {path}");
 
             // 讀取 csv 二進制文件  
@@ -44,13 +53,14 @@ namespace vts
             // 初始化詞彙字典
             dictionary = new Dictionary<string, string>();
 
+            string[] content;
+
             // 把 csv 中的數據儲存在二位數組中  
             for (int i = 0; i < contents.Length; i++)
             {
                 try
                 {
-                    string[] content = contents[i].Split(',');
-
+                    content = contents[i].Split(',');
                     vocabularies.Add(new VocabularyNorm(vocabulary: content[0].Trim(), description: content[1].Trim()));
                     dictionary.Add(content[0].Trim(), content[1].Trim());
                 }
@@ -69,11 +79,17 @@ namespace vts
         public override void onRemove()
         {
 
+        } 
+        #endregion
+
+        public SystemLanguage getTargetLanguage()
+        {
+            return target;
         }
 
-        public SystemLanguage getLanguage()
+        public SystemLanguage getDescribeLanguage()
         {
-            return language;
+            return describe;
         }
 
         public VocabularyNorm getVocabulary(int index)

@@ -36,7 +36,7 @@ namespace vts.mvc
         /// </summary>
         protected override void InitializeController()
         {
-            //可以保留，父類中初始化時new了一個controller
+            // 可以保留，父類中初始化時 new 了一個controller
             base.InitializeController();
 
             // 命令和通知繫結的邏輯

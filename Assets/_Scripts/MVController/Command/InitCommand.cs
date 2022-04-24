@@ -11,12 +11,13 @@ namespace vts
             Utils.log("Init");
             MainActivity main = notification.Body as MainActivity;
 
-            AppFacade.getInstance().registerMediator(mediator: new ScrollWordsMediator(mediator_name: MediatorName.ScrollWords1, 
-                                                                                       content: main.content));
+            AppFacade.getInstance().registerMediator(mediator: new ScrollWordsMediator(mediator_name: MediatorName.ScrollWords1,
+                                                                                       scroll: main.scroll));
 
-            AppFacade.getInstance().registerProxy(proxy: new VocabularyProxy(proxy_name: ProxyName.VocabularyProxy, 
-                                                                             language: SystemLanguage.English, 
-                                                                             table_number: 1));
+            AppFacade.getInstance().registerProxy(proxy: new VocabularyProxy(proxy_name: ProxyName.VocabularyProxy,
+                                                                             target: SystemLanguage.English,
+                                                                             describe: SystemLanguage.Chinese,
+                                                                             table_name: "table1"));
         }
     }
 }

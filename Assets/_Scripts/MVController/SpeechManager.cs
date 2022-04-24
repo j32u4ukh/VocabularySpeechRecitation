@@ -73,72 +73,6 @@ namespace vts
             // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
             StartCoroutine(preSetLanguage());
 #endif
-
-            buttons[0].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[0]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             ReciteMode.Word));
-            });
-
-            buttons[1].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[1]");
-
-                StartCoroutine(reciteContent(vocabulary: "内容",
-                                             description: "內容",
-                                             target: SystemLanguage.Japanese,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             ReciteMode.Word, ReciteMode.Description));
-            });
-
-            buttons[2].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[2]");
-
-                StartCoroutine(reciteContent(vocabulary: "内容",
-                                             description: "content",
-                                             target: SystemLanguage.Japanese,
-                                             describe: SystemLanguage.English,
-                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description));
-            });
-
-            buttons[3].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[3]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "内容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.Japanese,
-                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Word));
-            });
-
-            buttons[4].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[4]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling));
-            });
-
-            buttons[5].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[5]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             ReciteMode.Word, ReciteMode.Description, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling));
-            });
         }
 
         public static SpeechManager getInstance()
@@ -264,13 +198,20 @@ namespace vts
 #endif
         }
 
-        public void startReciteContent(VocabularyNorm vocab, SystemLanguage target, SystemLanguage describe = SystemLanguage.ChineseTraditional)
+        public void startReciteContent(VocabularyNorm vocab, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
         {
-            // TODO: 改用新的 reciteContent
+            StartCoroutine(reciteContent(vocabulary: vocab.vocabulary, 
+                                         description: vocab.description, 
+                                         target: target, 
+                                         describe: describe, 
+                                         modes: modes,
+                                         callback: callback));
         }
 
-        IEnumerator reciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, params ReciteMode[] modes)
+        IEnumerator reciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
         {
+            yield return StartCoroutine(waitForIdle());
+
             SystemLanguage language = SystemLanguage.Chinese;
             string content = string.Empty;
 
@@ -304,6 +245,29 @@ namespace vts
                 speak(content: content);
                 yield return StartCoroutine(waitForRelease());
             }
+
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// 等待 state 被重置回 State.Idle，才能開始執行切換語言或唸誦的指令。
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator waitForIdle()
+        {
+            float waiting_time = 0f;
+
+            while ((state != State.Idle) && (waiting_time < waiting_limit_time))
+            {
+                waiting_time += wait_time;
+                yield return wait;
+            }
+
+            if(waiting_time >= waiting_limit_time)
+            {
+                Utils.warn($"等待時間超時, waiting_time: {waiting_time}");
+                setState(state: State.Idle);
+            }
         }
 
         /// <summary>
@@ -323,29 +287,6 @@ namespace vts
             }
 
             setState(state: State.Idle);
-        }
-
-        IEnumerator reciteByMode(ReciteMode mode, string content = null, SystemLanguage language = SystemLanguage.ChineseTraditional)
-        {
-            // 只有 ReciteMode.Interval 模式允許 content 是 null，若不是則直接返回
-            if (content == null && mode != ReciteMode.Interval)
-            {
-                yield break;
-            }
-
-            switch (mode)
-            {
-                case ReciteMode.Word:
-                case ReciteMode.Description:
-                    speak(content: content);
-                    break;
-                case ReciteMode.Spelling:
-                    speak(content: getSpelling(content: content, language: language));
-                    break;
-                case ReciteMode.Interval:
-                    yield return interval;
-                    break;
-            }
         }
 
         string getSpelling(string content, SystemLanguage language = SystemLanguage.ChineseTraditional)
@@ -393,6 +334,75 @@ namespace vts
         {
             Utils.log($"Set state {this.state} -> {state}");
             this.state = state;
+        }
+
+        void test()
+        {
+            buttons[0].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[0]");
+
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             new ReciteMode[] { ReciteMode.Word }));
+            });
+
+            buttons[1].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[1]");
+
+                StartCoroutine(reciteContent(vocabulary: "内容",
+                                             description: "內容",
+                                             target: SystemLanguage.Japanese,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Description }));
+            });
+
+            buttons[2].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[2]");
+
+                StartCoroutine(reciteContent(vocabulary: "内容",
+                                             description: "content",
+                                             target: SystemLanguage.Japanese,
+                                             describe: SystemLanguage.English,
+                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description }));
+            });
+
+            buttons[3].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[3]");
+
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "内容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.Japanese,
+                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Word }));
+            });
+
+            buttons[4].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[4]");
+
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling }));
+            });
+
+            buttons[5].onClick.AddListener(() =>
+            {
+                Utils.log("buttons[5]");
+
+                StartCoroutine(reciteContent(vocabulary: "content",
+                                             description: "內容",
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Description, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling }));
+            });
         }
     }
 }

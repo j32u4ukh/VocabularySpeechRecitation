@@ -12,8 +12,21 @@ namespace vts
     /// </summary>
     public class MainActivity : MonoBehaviour
     {
-        public Transform content;
+        public static MainActivity Instance;
+        public GameObject scroll;
+        public GameObject card_prefab;
         public GameObject reporter;
+
+#if DEBUG
+        float height;
+        public Vector2 left;
+        public Vector2 right;
+#endif
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -25,7 +38,19 @@ namespace vts
             reporter.SetActive(false);
 #endif
 
-            //AppFacade.getInstance().init(this);
+#if DEBUG
+            height = scroll.GetComponent<RectTransform>().rect.height / 2.0f;
+#endif
+
+            AppFacade.getInstance().init(this);
+        }
+
+        void OnDrawGizmos()
+        {
+            Gizmos.color = Color.blue;
+            left = new Vector2(0, scroll.transform.position.y);
+            right = new Vector2(1080, scroll.transform.position.y);
+            Gizmos.DrawLine(left, right);
         }
     }
 }
