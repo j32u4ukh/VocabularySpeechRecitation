@@ -69,6 +69,11 @@ namespace vts.mvc
         {
             return RetrieveProxy(proxy_name);
         }
+
+        public bool hasProxy(string proxy_name)
+        {
+            return HasProxy(proxy_name);
+        }
         #endregion
 
         #region View
@@ -80,6 +85,16 @@ namespace vts.mvc
         {
             RegisterMediator(mediator);
         } 
+
+        public PureMVC.Interfaces.IMediator getMediator(string mediator_name)
+        {
+            return RetrieveMediator(mediator_name);
+        }
+
+        public bool hasMediator(string mediator_name)
+        {
+            return HasMediator(mediator_name);
+        }
         #endregion
 
         #region Controller

@@ -7,6 +7,9 @@
     {
         Init,
 
+        // 初始化 SpeechActivity
+        InitSpeech,
+
         // 單字載入完成
         VocabularyLoaded,
 

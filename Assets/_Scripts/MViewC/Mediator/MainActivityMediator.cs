@@ -1,12 +1,15 @@
 ﻿using PureMVC.Interfaces;
+using UnityEngine;
 
 namespace vts.mvc
 {
     public class MainActivityMediator : Mediator
     {
-        public MainActivityMediator(string mediator_name, object component) : base(mediator_name: mediator_name, component: component)
+        MainActivity main;
+
+        public MainActivityMediator(string mediator_name, GameObject activity) : base(mediator_name: mediator_name, component: activity)
         {
-          
+            main = activity.GetComponent<MainActivity>();
         }
 
         public override ENotification[] registerNotifications()
@@ -26,7 +29,24 @@ namespace vts.mvc
 
         public override void onRegister()
         {
+            Utils.log();
 
+            if (!AppFacade.getInstance().hasMediator(mediator_name: vts.MediatorName.BookmarkFragment))
+            {
+                BookmarkFragmentMediator bookmark = new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment, 
+                                                                                 component: main.bookmark_fragment);
+                AppFacade.getInstance().registerMediator(bookmark);
+            }
+
+            if (!AppFacade.getInstance().hasMediator(mediator_name: vts.MediatorName.SpeechFragment))
+            {
+                SpeechFragmentMediator speech = new SpeechFragmentMediator(mediator_name: vts.MediatorName.SpeechFragment,
+                                                                           component: main.speech_fragment);
+                AppFacade.getInstance().registerMediator(speech);
+            }
+
+            // TODO: 初始化數據庫列表
+            Utils.log("TODO: 初始化數據庫列表");
         }
 
         public override void onRemove()

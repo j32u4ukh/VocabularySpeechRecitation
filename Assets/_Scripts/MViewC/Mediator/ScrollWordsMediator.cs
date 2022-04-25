@@ -12,6 +12,7 @@ namespace vts.mvc
     {
         private ScrollRect scroll;
         private Transform content;
+        private string proxy_name;
 
         List<Button> buttons;
         int n_card;
@@ -44,10 +45,12 @@ namespace vts.mvc
         private int card_index;
         #endregion
 
-        public ScrollWordsMediator(string mediator_name, GameObject scroll) : base(mediator_name: mediator_name, component: scroll)
+        public ScrollWordsMediator(string mediator_name, GameObject scroll, string proxy_name) : base(mediator_name: mediator_name, component: scroll)
         {
             Utils.log($"MediatorName: {MediatorName}");
             this.scroll = scroll.GetComponent<ScrollRect>();
+            this.proxy_name = proxy_name;
+
             ScrollViewHandler handler = scroll.GetComponent<ScrollViewHandler>();
             this.content = this.scroll.content.transform;
             this.content_rt = content.GetComponent<RectTransform>();
@@ -100,7 +103,7 @@ namespace vts.mvc
 
                 // 當前單字念完
                 case ENotification.FinishedReading:
-                    nextVocabulary(notification: notification);
+                    nextVocabulary();
                     break;
             }
         }
@@ -195,7 +198,7 @@ namespace vts.mvc
         // TODO: 根據 VocabularyProxy 生成列表，並更新 content 的高度(單字列表 + 上下空白區域)
         void loadVocabulary()
         {
-            VocabularyProxy vocabulary_proxy = AppFacade.getInstance().getProxy(proxy_name: ProxyName.VocabularyProxy) as VocabularyProxy;
+            VocabularyProxy vocabulary_proxy = AppFacade.getInstance().getProxy(proxy_name: proxy_name) as VocabularyProxy;
             buttons = new List<Button>();
             VocabularyNorm vocab;
             Transform child;
@@ -215,7 +218,7 @@ namespace vts.mvc
 
                 position += (card_size + spacing);
 
-                SpeakNorm norm = new SpeakNorm(proxy_name: ProxyName.VocabularyProxy, index: index);
+                SpeakNorm norm = new SpeakNorm(proxy_name: proxy_name, index: index);
 
                 vocab = vocabulary_proxy.getVocabulary(index: index);
                 label = child.GetComponentInChildren(typeof(Text)) as Text;
@@ -233,7 +236,7 @@ namespace vts.mvc
             }
         }
 
-        void nextVocabulary(INotification notification)
+        void nextVocabulary()
         {
             Utils.log($"card_index: {card_index}, n_card: {n_card}");
             

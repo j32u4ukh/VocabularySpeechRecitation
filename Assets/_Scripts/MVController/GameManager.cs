@@ -1,17 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using vts.mvc;
 
 namespace vts
 {
     public class GameManager : MonoBehaviour
     {
+        public MainActivity main;
+
         private static GameManager instance = null;
         private List<IEnumerator> enumerators = null;
+        [SerializeField] private GameObject reporter;
 
         private void Awake()
         {
             instance = this;
+        }
+
+        private void Start()
+        {
+#if !UNITY_EDITOR && UNITY_ANDROID
+            reporter.SetActive(true);
+#else
+            reporter.SetActive(false);
+#endif
+
+            AppFacade.getInstance().init(main);
         }
 
         public static GameManager getInstance()
