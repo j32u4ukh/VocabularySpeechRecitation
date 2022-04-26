@@ -7,6 +7,8 @@
     {
         Init,
 
+        SwitchBookmark,
+
         // 初始化 SpeechActivity
         InitSpeech,
 

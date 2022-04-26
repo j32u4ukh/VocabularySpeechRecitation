@@ -11,6 +11,9 @@ namespace vts
         #region Fragment
         public GameObject bookmark_fragment;
         public GameObject speech_fragment;
+        public GameObject custom_fragment;
+        public GameObject exam_fragment;
+        public GameObject setting_fragment;
         #endregion
 
         [Header("Activity")]
