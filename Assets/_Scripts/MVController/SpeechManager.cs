@@ -11,17 +11,19 @@ using vts.mvc;
 
 namespace vts
 {
-
+    // TODO: 中斷說話的函式 STOP()
     public class SpeechManager : MonoBehaviour, ISpeech
     {
         private static SpeechManager instance = null;
         private State state = State.Idle;
 
+        #region 時間相關設定
         float wait_time = 0.01f;
         float interval_time = 1.0f;
         float waiting_limit_time = 20.0f;
         WaitForSeconds wait;
-        WaitForSeconds interval;
+        WaitForSeconds interval; 
+        #endregion
 
         #region SpeechLib
         SpVoice voice;
@@ -35,8 +37,6 @@ namespace vts
         #region FantomLib
         [SerializeField] FantomLib.TextToSpeechController controller;
         #endregion
-
-        public Button[] buttons;
 
         private void Awake()
         {
@@ -163,7 +163,6 @@ namespace vts
 #endif
         }
 
-        // TODO: 找出兩次說話間隔時間的設定
         public void speak(string content)
         {
             Utils.log($"content: {content}");
@@ -334,75 +333,6 @@ namespace vts
         {
             Utils.log($"Set state {this.state} -> {state}");
             this.state = state;
-        }
-
-        void test()
-        {
-            buttons[0].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[0]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             new ReciteMode[] { ReciteMode.Word }));
-            });
-
-            buttons[1].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[1]");
-
-                StartCoroutine(reciteContent(vocabulary: "内容",
-                                             description: "內容",
-                                             target: SystemLanguage.Japanese,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Description }));
-            });
-
-            buttons[2].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[2]");
-
-                StartCoroutine(reciteContent(vocabulary: "内容",
-                                             description: "content",
-                                             target: SystemLanguage.Japanese,
-                                             describe: SystemLanguage.English,
-                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description }));
-            });
-
-            buttons[3].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[3]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "内容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.Japanese,
-                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Word }));
-            });
-
-            buttons[4].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[4]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling }));
-            });
-
-            buttons[5].onClick.AddListener(() =>
-            {
-                Utils.log("buttons[5]");
-
-                StartCoroutine(reciteContent(vocabulary: "content",
-                                             description: "內容",
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
-                                             new ReciteMode[] { ReciteMode.Word, ReciteMode.Description, ReciteMode.Word, ReciteMode.Description, ReciteMode.Spelling }));
-            });
         }
     }
 }

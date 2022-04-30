@@ -13,10 +13,10 @@ namespace vts
         [HideInInspector] public const string setting = "SettingFragment"; 
         #endregion
 
-        public GameObject speech_obj;
-        public GameObject custom_obj;
-        public GameObject exam_obj;
-        public GameObject setting_obj;
+        public GameObject speech_bookmark;
+        public GameObject custom_bookmark;
+        public GameObject exam_bookmark;
+        public GameObject setting_bookmark;
 
         Transform[] bookmarks;
         int BOOKMARK_SIZE = 4;
@@ -24,10 +24,10 @@ namespace vts
         private void Start()
         {
             bookmarks = new Transform[] {
-                speech_obj.transform,
-                custom_obj.transform,
-                exam_obj.transform,
-                setting_obj.transform
+                speech_bookmark.transform,
+                custom_bookmark.transform,
+                exam_bookmark.transform,
+                setting_bookmark.transform
             };
         }
 

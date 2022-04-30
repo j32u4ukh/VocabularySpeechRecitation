@@ -17,7 +17,7 @@ namespace vts.mvc
             return NO_TIFICATION;
         }
         
-        public override void handleNotification(INotification notification)
+        public override void onNotificationListener(INotification notification)
         {
             
         }

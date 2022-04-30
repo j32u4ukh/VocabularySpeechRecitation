@@ -2,12 +2,16 @@
 {
     /// <summary>
     /// 在使用 PureMVC 時，使用字串傳遞通知訊息，為了方便呼叫防止寫錯，可以宣告一個通知名類用於管理所有通知名。
+    /// 相當於事件(event)
     /// </summary>
     public enum ENotification
     {
         Init,
 
         SwitchBookmark,
+
+        // 單字組清單載入完成
+        GroupListLoaded,
 
         // 初始化 SpeechActivity
         InitSpeech,

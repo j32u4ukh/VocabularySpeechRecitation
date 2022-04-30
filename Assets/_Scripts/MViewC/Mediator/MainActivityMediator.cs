@@ -29,9 +29,9 @@ namespace vts.mvc
             return new ENotification[] { ENotification.SwitchBookmark };
         }
 
-        public override void handleNotification(INotification notification)
+        public override void onNotificationListener(INotification notification)
         {
-            ENotification en = (ENotification)Enum.Parse(typeof(ENotification), notification.Name);
+            ENotification en = AppFacade.transNameToEnum(name: notification.Name);
 
             // 根據通知的名稱作相應的處理
             switch (en)
@@ -47,22 +47,18 @@ namespace vts.mvc
         {
             Utils.log();
 
-            if (!AppFacade.getInstance().hasMediator(mediator_name: vts.MediatorName.BookmarkFragment))
-            {
-                BookmarkFragmentMediator bookmark = new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment,
-                                                                                 component: main.bookmark_fragment);
-                AppFacade.getInstance().registerMediator(bookmark);
-            }
+            // 主畫面上方，頁籤區域
+            AppFacade.getInstance().registerMediator(new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment,
+                                                                                  component: main.bookmark_fragment));
 
-            if (!AppFacade.getInstance().hasMediator(mediator_name: vts.MediatorName.SpeechFragment))
-            {
-                SpeechFragmentMediator speech = new SpeechFragmentMediator(mediator_name: vts.MediatorName.SpeechFragment,
-                                                                           component: main.speech_fragment);
-                AppFacade.getInstance().registerMediator(speech);
-            }
-
-            // TODO: 初始化數據庫列表
+            // TODO: 初始化數據庫列表，初始化完成再初始化 vts.MediatorName.SpeechFragment
             Utils.log("TODO: 初始化數據庫列表");
+
+            AppFacade.getInstance().registerProxy(proxy: new SpeechFragmentProxy(proxy_name: vts.ProxyName.SpeechFragment));
+
+            // 主畫面下方，初始頁面
+            AppFacade.getInstance().registerMediator(new SpeechFragmentMediator(mediator_name: vts.MediatorName.SpeechFragment,
+                                                                                component: main.speech_fragment));
         }
 
         public override void onRemove()
@@ -73,6 +69,7 @@ namespace vts.mvc
 
         void switchBookmark(string bookmark)
         {
+            // 若點選的和當前頁籤相同，則無需切換
             if (current.name.Equals(bookmark))
             {
                 return;

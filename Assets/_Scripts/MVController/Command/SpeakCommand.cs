@@ -1,4 +1,4 @@
-using PureMVC.Interfaces;
+ï»¿using PureMVC.Interfaces;
 using UnityEngine;
 
 namespace vts.mvc
@@ -14,7 +14,7 @@ namespace vts.mvc
             VocabularyProxy proxy = AppFacade.getInstance().getProxy(proxy_name: norm.proxy_name) as VocabularyProxy;
             VocabularyNorm vocab = proxy.getVocabulary(index: norm.index);
 
-            // ©À»w«ü©wªº¤º®e
+            // å¿µèª¦æŒ‡å®šçš„å…§å®¹
             SpeechManager.getInstance().startReciteContent(vocab: vocab,
                                                            target: SystemLanguage.English,
                                                            describe: SystemLanguage.ChineseTraditional,
@@ -24,7 +24,7 @@ namespace vts.mvc
 
         void finishedReadingCallback()
         {
-            // ¥ş³¡°á§¹¡A°e¥X³qª¾ ENotification.FinishedReading
+            // å…¨éƒ¨å”¸å®Œï¼Œé€å‡ºé€šçŸ¥ ENotification.FinishedReading
             AppFacade.getInstance().sendNotification(ENotification.FinishedReading, body: norm);
         }
     }

@@ -19,29 +19,20 @@ namespace vts
         [Header("Activity")]
         public GameObject speech_activity;
 
+        private void OnEnable()
+        {
+            Utils.log();
+        }
+
         // Start is called before the first frame update
         void Start()
         {
-            if (!AppFacade.getInstance().hasMediator(MediatorName.MainActivity))
-            {
-                MainActivityMediator mediator = new MainActivityMediator(mediator_name: MediatorName.MainActivity, activity: gameObject);
-                AppFacade.getInstance().registerMediator(mediator);
-            }
+            Utils.log();
         }
 
-        // Update is called once per frame
-        void Update()
+        private void OnDisable()
         {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                speech_activity.SetActive(true);
-                gameObject.SetActive(false);
-            }
-
-            //if (Input.GetMouseButtonDown(0))
-            //{
-            //    Utils.log(Input.mousePosition.ToString());
-            //}
+            Utils.log();
         }
     }
 }

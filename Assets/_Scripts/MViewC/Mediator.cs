@@ -54,7 +54,7 @@ namespace vts.mvc
         /// <param name="notification"></param>
         public override void HandleNotification(PureMVC.Interfaces.INotification notification)
         {
-            handleNotification(notification);
+            onNotificationListener(notification);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace vts.mvc
         ///     </para>
         /// </remarks>
         /// <param name="notification"></param>
-        public abstract void handleNotification(PureMVC.Interfaces.INotification notification);
+        public abstract void onNotificationListener(PureMVC.Interfaces.INotification notification);
 
         /// <summary>
         /// Called by the View when the Mediator is registered

@@ -114,6 +114,11 @@ namespace vts.mvc
         {
             SendNotification(notification.ToString(), body, type);
         } 
+
+        public static ENotification transNameToEnum(string name)
+        {
+            return (ENotification)Enum.Parse(typeof(ENotification), name);
+        }
         #endregion
     }
 

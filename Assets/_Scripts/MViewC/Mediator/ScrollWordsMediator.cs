@@ -88,7 +88,7 @@ namespace vts.mvc
             };
         }
 
-        public override void handleNotification(INotification notification)
+        public override void onNotificationListener(INotification notification)
         {
             Utils.log($"Handle notification.Name: {notification.Name}");
 

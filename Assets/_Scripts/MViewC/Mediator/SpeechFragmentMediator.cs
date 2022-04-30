@@ -14,14 +14,22 @@ namespace vts.mvc
 
         public override ENotification[] registerNotifications()
         {
-            return NO_TIFICATION;
+            return new ENotification[] { ENotification.GroupListLoaded };
         }
 
-        public override void handleNotification(INotification notification)
+        public override void onNotificationListener(INotification notification)
         {
-            
+            ENotification en = AppFacade.transNameToEnum(name: notification.Name);
+
+            switch (en)
+            {
+                case ENotification.GroupListLoaded:
+                    displayGroupList();
+                    break;
+            }
         }
 
+        #region MyRegion
         public override void onRegister()
         {
             Utils.log();
@@ -29,7 +37,13 @@ namespace vts.mvc
 
         public override void onRemove()
         {
-            
+
+        } 
+        #endregion
+
+        void displayGroupList()
+        {
+
         }
     }
 }

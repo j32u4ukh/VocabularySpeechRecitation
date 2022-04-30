@@ -7706,10 +7706,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edfe9c7101ae93f47876e39b42f674ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speech_obj: {fileID: 203319224}
-  custom_obj: {fileID: 1969064698}
-  exam_obj: {fileID: 1414762237}
-  setting_obj: {fileID: 1750349460}
+  speech_bookmark: {fileID: 203319224}
+  custom_bookmark: {fileID: 1969064698}
+  exam_bookmark: {fileID: 1414762237}
+  setting_bookmark: {fileID: 1750349460}
 --- !u!1 &1811018331
 GameObject:
   m_ObjectHideFlags: 0
@@ -7742,7 +7742,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000049540653}
+  m_AnchoredPosition: {x: 0, y: 0.00029021216}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1830515507
