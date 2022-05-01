@@ -10,8 +10,14 @@
 
         SwitchBookmark,
 
+        // 初始化載入單字組清單
+        InitGroupList,
+
         // 單字組清單載入完成
         GroupListLoaded,
+
+        // 呈現單字組清單
+        DisplayGroupList,
 
         // 初始化 SpeechActivity
         InitSpeech,

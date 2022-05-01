@@ -9,28 +9,29 @@ namespace vts.data_operation
 {
     public class Operator : MonoBehaviour
     {
+        Action onFileLoaded;
+
         // Start is called before the first frame update
         void Start()
         {
             Table table = new Table();
-            List<List<string>> rows = new List<List<string>>();
+            string path = Path.Combine(Application.streamingAssetsPath, "vocabulary", "EnTw.csv");
+            List<List<string>> content = new List<List<string>>();
             List<string> row;
 
-            for (int i = 0; i < 29; i++)
+            for(int i = 0; i < 29; i++)
             {
-                row = new List<string>() 
-                {
-                    $"EnTw {i}",
-                    "en",
-                    "zh_TW",
-                    $"table{i}"
-                };
-
-                rows.Add(row);
+                row = new List<string>() { $"EnTw{i}", $"table{i}" };
+                content.Add(row);
             }
 
-            table.loadContent(rows);
-            _ = table.saveAsync(Path.Combine(Application.streamingAssetsPath, "vocabulary", $"EnTw.csv"));
+            table.loadContent(content);
+            _ = table.saveAsync(path: path);
+
+            table.onFileSaved += () => 
+            {
+                Utils.log("onFileSaved");
+            };
         }
     }
 }

@@ -12,15 +12,6 @@ namespace vts
             MainActivityMediator mediator = new MainActivityMediator(mediator_name: MediatorName.MainActivity, 
                                                                      activity: activity.gameObject);
             AppFacade.getInstance().registerMediator(mediator);
-
-            //AppFacade.getInstance().registerMediator(mediator: new ScrollWordsMediator(mediator_name: norm.mediator_name,
-            //                                                                           scroll: norm.scroll,
-            //                                                                           proxy_name: norm.proxy_name));
-
-            //AppFacade.getInstance().registerProxy(proxy: new VocabularyProxy(proxy_name: norm.proxy_name,
-            //                                                                 target: norm.target,
-            //                                                                 describe: norm.describe,
-            //                                                                 table_name: norm.table_name));
         }
     }
 }

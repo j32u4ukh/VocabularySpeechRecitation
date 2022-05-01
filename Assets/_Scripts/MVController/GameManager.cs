@@ -27,6 +27,8 @@ namespace vts
 #endif
 
             AppFacade.getInstance().init(main);
+
+            SpeechFragmentMediator.onCreateGroup += getInstantiate;
         }
 
         public static GameManager getInstance()
@@ -68,6 +70,18 @@ namespace vts
         public void executeIEnumerator(IEnumerator enumerator)
         {
             StartCoroutine(enumerator);
+        }
+
+        public void getInstantiate(GameObject prefab, Transform parent)
+        {
+            Utils.log();
+            GameObject obj = Instantiate(prefab, parent);
+
+        }
+
+        public void destory<T>(T garbage)
+        {
+            Destroy(garbage as UnityEngine.GameObject);
         }
     }
 }

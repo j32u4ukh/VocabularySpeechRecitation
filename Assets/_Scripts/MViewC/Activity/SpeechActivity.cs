@@ -23,19 +23,7 @@ namespace vts
         // Start is called before the first frame update
         void Start()
         {
-            AppFacade.getInstance().registerCommand(ENotification.InitSpeech, () =>
-            {
-                return new InitSpeechCommand();
-            });
-
-            SpeechNorm norm = new SpeechNorm(mediator_name: MediatorName.ScrollWords1,
-                                             scroll: scroll,
-                                             proxy_name: ProxyName.VocabularyProxy,
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.Chinese,
-                                             table_name: "table1");
-
-            AppFacade.getInstance().sendNotification(ENotification.InitSpeech, body: norm);
+            AppFacade.getInstance().registerMediator(new SpeechActivityMediator(mediator_name: MediatorName.SpeechActivity, activity: this));
         }
 
 #if DEBUG

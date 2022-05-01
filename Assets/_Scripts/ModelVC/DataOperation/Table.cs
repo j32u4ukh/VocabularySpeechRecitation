@@ -10,11 +10,12 @@ namespace vts.data_operation
     public class Table
     {
         public Action onFileLoaded;
-        private List<List<string>> table;
+        public Action onFileSaved;
+        private List<List<string>> content;
 
         public IEnumerable<List<string>> iterTable()
         {
-            foreach (List<string> row in table)
+            foreach (List<string> row in content)
             {
                 yield return row;
             }
@@ -22,7 +23,7 @@ namespace vts.data_operation
 
         public int getRowNumber()
         {
-            return table.Count;
+            return content.Count;
         }
 
         #region 檔案讀取
@@ -55,7 +56,7 @@ namespace vts.data_operation
 
         private void parseFile(string content)
         {
-            table = new List<List<string>>();
+            this.content = new List<List<string>>();
 
             // 讀取每一行的內容  
             string[] lines = content.Split('\r');
@@ -78,7 +79,7 @@ namespace vts.data_operation
                         row.Add(element.Trim());
                     }
 
-                    table.Add(row);
+                    this.content.Add(row);
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -89,14 +90,14 @@ namespace vts.data_operation
         #endregion
 
         #region 檔案寫出
-        public void loadContent(List<List<string>> table)
+        public void loadContent(List<List<string>> content)
         {
-            this.table = new List<List<string>>(table);
+            this.content = new List<List<string>>(content);
         }
 
         public void save(string path)
         {
-            if (table == null)
+            if (content == null)
             {
                 return;
             }
@@ -116,7 +117,7 @@ namespace vts.data_operation
 
             string line;
 
-            foreach(List<string> row in table)
+            foreach(List<string> row in content)
             {
                 line = string.Join(",", row);
                 writer.WriteLine(line);
@@ -135,7 +136,7 @@ namespace vts.data_operation
 
         public async Task saveAsync(string path)
         {
-            if (table == null)
+            if (content == null)
             {
                 return;
             }
@@ -144,7 +145,7 @@ namespace vts.data_operation
                                                    encoding: System.Text.Encoding.UTF8);
             string line;
 
-            foreach (List<string> row in table)
+            foreach (List<string> row in content)
             {
                 line = string.Join(",", row);
                 await writer.WriteLineAsync(line);
@@ -154,6 +155,7 @@ namespace vts.data_operation
             writer.Dispose();
 
             Utils.log($"Save to {path}");
+            onFileSaved?.Invoke();
         }
         #endregion
     }

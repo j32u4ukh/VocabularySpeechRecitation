@@ -9,6 +9,6 @@ namespace vts
         public static string VocabularyProxy = "VocabularyProxy";
 
         // 單字組(每個單字組有約 100 個單字)列表
-        public static string SpeechFragment = "SpeechFragment";
+        public static string GroupList = "GroupList";
     }
 }

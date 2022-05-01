@@ -46,19 +46,6 @@ namespace vts.mvc
         public override void onRegister()
         {
             Utils.log();
-
-            // 主畫面上方，頁籤區域
-            AppFacade.getInstance().registerMediator(new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment,
-                                                                                  component: main.bookmark_fragment));
-
-            // TODO: 初始化數據庫列表，初始化完成再初始化 vts.MediatorName.SpeechFragment
-            Utils.log("TODO: 初始化數據庫列表");
-
-            AppFacade.getInstance().registerProxy(proxy: new SpeechFragmentProxy(proxy_name: vts.ProxyName.SpeechFragment));
-
-            // 主畫面下方，初始頁面
-            AppFacade.getInstance().registerMediator(new SpeechFragmentMediator(mediator_name: vts.MediatorName.SpeechFragment,
-                                                                                component: main.speech_fragment));
         }
 
         public override void onRemove()

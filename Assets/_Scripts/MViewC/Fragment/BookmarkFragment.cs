@@ -23,6 +23,10 @@ namespace vts
         
         private void Start()
         {
+            // 主畫面上方，頁籤區域
+            AppFacade.getInstance().registerMediator(new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment,
+                                                                                  component: gameObject));
+
             bookmarks = new Transform[] {
                 speech_bookmark.transform,
                 custom_bookmark.transform,

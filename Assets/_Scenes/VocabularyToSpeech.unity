@@ -5460,13 +5460,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 235747147}
-  buttons:
-  - {fileID: 1495035483}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!4 &1149238183
 Transform:
   m_ObjectHideFlags: 0
@@ -5800,7 +5793,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f746945e2f251854db6770d554e7ac59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scroll: {fileID: 1733581554}
+  content: {fileID: 1811018332}
+  prefab: {fileID: 6202067532246997303, guid: ddbd5bde0f222cd4fbaa0966bdfcb44d, type: 3}
 --- !u!1 &1290255513
 GameObject:
   m_ObjectHideFlags: 0
@@ -6772,8 +6766,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1752627167}
   m_HandleRect: {fileID: 1752627166}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.48374164
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7719,6 +7713,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1811018332}
+  - component: {fileID: 1811018333}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -7742,9 +7737,35 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00029021216}
-  m_SizeDelta: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 3100.8289}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &1811018333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811018331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 50
+    m_Right: 50
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1830515507
 GameObject:
   m_ObjectHideFlags: 0
