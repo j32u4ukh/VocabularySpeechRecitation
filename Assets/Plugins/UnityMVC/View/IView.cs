@@ -12,6 +12,6 @@ namespace UnityMVC
 
         IMediator get(string name);
 
-        IMediator remove(string name);
+        IMediator expulsion(string name);
     }
 }

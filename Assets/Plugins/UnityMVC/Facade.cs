@@ -75,7 +75,7 @@ namespace UnityMVC
         /// <returns>the <c>IProxy</c> that was removed from the <c>Model</c></returns>
         public virtual IProxy removeProxy(string proxyName)
         {
-            return model.remove(proxyName);
+            return model.expulsion(proxyName);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace UnityMVC
         /// <returns>the <c>IMediator</c> that was removed from the <c>View</c></returns>
         public virtual IMediator removeMediator(string name)
         {
-            return view.remove(name);
+            return view.expulsion(name);
         }
 
         /// <summary>
@@ -146,9 +146,9 @@ namespace UnityMVC
         /// </summary>
         /// <param name="notification_name">the name of the <c>INotification</c> to associate the <c>ICommand</c> with</param>
         /// <param name="func">a reference to the Class of the <c>ICommand</c></param>
-        public virtual void registerCommand(string notification_name, System.Func<ICommand> func)
+        public virtual void registerCommand(ICommand commnad)
         {
-            controller.register(notification_name, func);
+            controller.register(commnad);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace UnityMVC
         /// <param name="notification_name">the name of the <c>INotification</c> to remove the <c>ICommand</c> mapping for</param>
         public virtual void removeCommand(string notification_name)
         {
-            controller.remove(notification_name);
+            controller.expulsion(notification_name);
         }
 
         /// <summary>

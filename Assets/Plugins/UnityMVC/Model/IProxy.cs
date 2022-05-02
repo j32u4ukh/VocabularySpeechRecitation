@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityMVC
+﻿namespace UnityMVC
 {
     public interface IProxy : IRegister
     {

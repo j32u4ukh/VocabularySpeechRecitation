@@ -8,16 +8,10 @@ namespace UnityMVC
     {
         string mediator_name = null;
 
-        // Start is called before the first frame update
-        void Start()
+        public virtual void Awake()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            mediator_name = GetType().ToString();
+            Facade.getInstance().registerMediator(this);
         }
 
         public virtual void onRegister()
@@ -25,7 +19,7 @@ namespace UnityMVC
 
         }
 
-        public virtual void onRemove()
+        public virtual void onExpulsion()
         {
 
         }
@@ -40,9 +34,9 @@ namespace UnityMVC
             return mediator_name;
         }
 
-        public virtual IEnumerable<string> listenToNotifications()
+        public virtual IEnumerable<string> subscribeNotifications()
         {
-            return new string[0];
+            return null;
         }
 
         public virtual void onNotificationListener(INotification notification)

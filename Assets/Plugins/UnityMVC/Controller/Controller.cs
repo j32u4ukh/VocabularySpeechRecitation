@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,39 +9,46 @@ namespace UnityMVC
     public class Controller : IController
     {
         /// <summary>Mapping of Notification names to Command Class references</summary>
-        protected readonly System.Collections.Concurrent.ConcurrentDictionary<string, Func<ICommand>> commands;
+        protected readonly ConcurrentDictionary<string, ICommand> commands;
 
-        public void register(string notification_name, Func<ICommand> func)
+        public void register(ICommand commnad)
         {
-            if (commands.TryGetValue(notification_name, out _) == false)
+            if (commands.TryAdd(commnad.getName(), commnad))
             {
-                Facade.getInstance().registerNotificationListener(notification_name: notification_name, 
-                                                                  listener: execute);
-            }
+                // Mediator 感興趣的 Notification 們的名稱
+                IEnumerable<string> notifications = commnad.subscribeNotifications();
 
-            commands[notification_name] = func;
+                foreach (string notification in notifications)
+                {
+                    Facade.getInstance().registerNotificationListener(notification, listener: commnad.onNotificationListener);
+                }
+
+                // alert the mediator that it has been registered
+                commnad.onRegister();
+            }
         }
 
         public bool isExists(string name)
         {
-            throw new NotImplementedException();
+            return commands.ContainsKey(name);
         }
 
-        public void execute(INotification notification)
+        public ICommand expulsion(string name)
         {
-            if (commands.TryGetValue(notification.getName(), out Func<ICommand> func))
+            if (commands.TryRemove(name, out ICommand command))
             {
-                ICommand command = func();
-                command.execute(notification);
-            }
-        }
+                // Mediator 感興趣的 Notification 們的名稱
+                IEnumerable<string> notifications = command.subscribeNotifications();
 
-        public void remove(string notification_name)
-        {
-            if (commands.TryRemove(notification_name, out _))
-            {
-                Facade.getInstance().removeNotificationListener(notification_name, execute);
+                foreach (string notification in notifications)
+                {
+                    Facade.getInstance().removeNotificationListener(notification, command.onNotificationListener);
+                }
+
+                command.onExpulsion();
             }
+
+            return command;
         }
     }
 }

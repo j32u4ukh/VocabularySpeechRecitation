@@ -21,7 +21,7 @@ namespace UnityMVC
             if (mediators.TryAdd(mediator.getName(), mediator))
             {
                 // Mediator 感興趣的 Notification 們的名稱
-                IEnumerable<string> notifications = mediator.listenToNotifications();
+                IEnumerable<string> notifications = mediator.subscribeNotifications();
  
                 foreach(string notification in notifications)
                 {
@@ -43,19 +43,19 @@ namespace UnityMVC
             return mediators.TryGetValue(name, out IMediator mediator) ? mediator : null;
         }
 
-        public virtual IMediator remove(string name)
+        public virtual IMediator expulsion(string name)
         {
             if (mediators.TryRemove(name, out IMediator mediator))
             {
                 // Mediator 感興趣的 Notification 們的名稱
-                IEnumerable<string> notifications = mediator.listenToNotifications();
+                IEnumerable<string> notifications = mediator.subscribeNotifications();
 
                 foreach (string notification in notifications)
                 {
                     Facade.getInstance().removeNotificationListener(notification, mediator.onNotificationListener);
                 }
 
-                mediator.onRemove();
+                mediator.onExpulsion();
             }
 
             return mediator;

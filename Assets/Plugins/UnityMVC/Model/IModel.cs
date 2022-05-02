@@ -12,6 +12,6 @@ namespace UnityMVC
 
         IProxy get(string name);
 
-        IProxy remove(string name);
+        IProxy expulsion(string name);
     }
 }

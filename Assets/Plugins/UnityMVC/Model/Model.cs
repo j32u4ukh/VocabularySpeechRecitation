@@ -30,11 +30,11 @@ namespace UnityMVC
             return proxies.ContainsKey(name);
         }
 
-        public virtual IProxy remove(string name)
+        public virtual IProxy expulsion(string name)
         {
             if (proxies.TryRemove(name, out IProxy proxy))
             {
-                proxy.onRemove();
+                proxy.onExpulsion();
             }
 
             return proxy;

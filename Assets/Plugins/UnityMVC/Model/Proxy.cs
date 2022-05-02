@@ -20,7 +20,7 @@ namespace UnityMVC
 
         }
 
-        public virtual void onRemove()
+        public virtual void onExpulsion()
         {
 
         } 

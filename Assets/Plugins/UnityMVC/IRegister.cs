@@ -7,6 +7,7 @@ namespace UnityMVC
     public interface IRegister
     {
         /// <summary>
+        /// TODO: 似乎沒有必要 setName，可以考慮移除
         /// 設置實體名稱
         /// </summary>
         /// <param name="name"></param>
@@ -24,8 +25,8 @@ namespace UnityMVC
         void onRegister();
 
         /// <summary>
-        /// 移除實體前呼叫
+        /// 移除實體後呼叫
         /// </summary>
-        void onRemove();
+        void onExpulsion();
     }
 }

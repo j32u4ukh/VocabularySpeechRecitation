@@ -7,12 +7,10 @@ namespace UnityMVC
 {
     public interface IController
     {
-        void register(string name, Func<ICommand> func);
+        void register(ICommand commnad);
 
         bool isExists(string name);
 
-        void execute(INotification notification);
-
-        void remove(string name);
+        ICommand expulsion(string name);
     }
 }

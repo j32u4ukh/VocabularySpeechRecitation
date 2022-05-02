@@ -1,13 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace UnityMVC
 {
-    public interface IMediator : IRegister
+    public interface IMediator : IRegister, INotify
     {
-        IEnumerable<string> listenToNotifications();
 
-        void onNotificationListener(INotification notification);
     }
 }
