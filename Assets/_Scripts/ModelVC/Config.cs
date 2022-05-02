@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace vts
+namespace VTS
 {
     public class Config
     {

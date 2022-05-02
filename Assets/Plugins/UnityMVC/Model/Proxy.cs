@@ -11,7 +11,7 @@ namespace UnityMVC
 
         public Proxy()
         {
-
+            name = GetType().ToString();
         }
 
         #region Life cycle

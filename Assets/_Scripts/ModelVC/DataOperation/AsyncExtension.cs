@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace vts
+namespace VTS
 {
     public static class AsyncExtension
     {

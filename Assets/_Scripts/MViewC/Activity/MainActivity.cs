@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using vts.mvc;
+using UnityMVC;
 
-namespace vts
+namespace VTS
 {
-    public class MainActivity : MonoBehaviour
+    public class MainActivity : Mediator
     {
         [Header("Fragment")]
         #region Fragment
@@ -14,25 +14,64 @@ namespace vts
         public GameObject custom_fragment;
         public GameObject exam_fragment;
         public GameObject setting_fragment;
+
+        GameObject current;
         #endregion
 
         [Header("Activity")]
         public GameObject speech_activity;
 
-        private void OnEnable()
+        private void Start()
         {
-            Utils.log();
+            current = speech_fragment;
         }
 
-        // Start is called before the first frame update
-        void Start()
+        public override IEnumerable<string> subscribeNotifications()
         {
-            Utils.log();
+            return new string[] { 
+                Notification.SwitchBookmark
+            };
         }
 
-        private void OnDisable()
+        public override void onNotificationListener(INotification notification)
         {
-            Utils.log();
+            // 根據通知的名稱作相應的處理
+            switch (notification.getName())
+            {
+                case Notification.SwitchBookmark:
+                    switchBookmark(bookmark: notification.getHeader());
+                    break;
+            }
+        }
+
+        void switchBookmark(string bookmark)
+        {
+            // 若點選的和當前頁籤相同，則無需切換
+            if (current.name.Equals(bookmark))
+            {
+                return;
+            }
+
+            Utils.log($"{current.name} -> {bookmark}");
+            current.SetActive(false);
+
+            switch (bookmark)
+            {
+                case BookmarkFragment.speech:
+                    current = speech_fragment;
+                    break;
+                case BookmarkFragment.custom:
+                    current = custom_fragment;
+                    break;
+                case BookmarkFragment.exam:
+                    current = exam_fragment;
+                    break;
+                case BookmarkFragment.setting:
+                    current = setting_fragment;
+                    break;
+            }
+
+            current.SetActive(true);
         }
     }
 }

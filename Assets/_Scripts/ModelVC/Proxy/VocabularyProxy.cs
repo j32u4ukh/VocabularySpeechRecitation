@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityMVC;
 
-namespace vts.mvc
+namespace VTS
 {
     public class VocabularyProxy : Proxy
     {
@@ -24,9 +25,8 @@ namespace vts.mvc
         /// 必須寫建構函式，在建構函式中必須呼叫父類的建構函式，Proxy中只提供了一個有參構造
         /// 可以在建構函式中從外部傳入資料data使用，也可以在建構函式中初始化資料
         /// </summary>
-        public VocabularyProxy(string proxy_name, SystemLanguage target, SystemLanguage describe, string table_name) : base(proxy_name: proxy_name)
+        public VocabularyProxy(string proxy_name, SystemLanguage target, SystemLanguage describe, string table_name)
         {
-            Utils.log($"ProxyName: {ProxyName}");
             this.target = target;
             this.describe = describe;
             this.table_name = table_name;
@@ -72,13 +72,8 @@ namespace vts.mvc
             Utils.log($"Vocabulary loaded, #vocabulary: {vocabularies.Count}");
 
             // 通知大家，單字已載入完畢
-            AppFacade.getInstance().sendNotification(notification: ENotification.VocabularyLoaded);
+            Facade.getInstance().sendNotification(notification_name: Notification.VocabularyLoaded);
         }
-
-        public override void onRemove()
-        {
-
-        } 
         #endregion
 
         public SystemLanguage getTargetLanguage()

@@ -1,12 +1,12 @@
-﻿using PureMVC.Interfaces;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityMVC;
 
-namespace vts.mvc
+namespace VTS
 {
     public class ScrollWordsMediator : Mediator
     {
@@ -45,64 +45,52 @@ namespace vts.mvc
         private int card_index;
         #endregion
 
-        public ScrollWordsMediator(string mediator_name, GameObject scroll, string proxy_name) : base(mediator_name: mediator_name, component: scroll)
+        private void Start()
         {
-            Utils.log($"MediatorName: {MediatorName}");
-            this.scroll = scroll.GetComponent<ScrollRect>();
-            this.proxy_name = proxy_name;
-
             ScrollViewHandler handler = scroll.GetComponent<ScrollViewHandler>();
-            this.content = this.scroll.content.transform;
-            this.content_rt = content.GetComponent<RectTransform>();
-            VerticalLayoutGroup layout = this.content.GetComponent<VerticalLayoutGroup>();
-
-            FIXED_WAITING_TIME = new WaitForSeconds(FIXED_TIME);
-            positions = new List<float>();
-            card_size = content.GetChild(index: 1).GetComponent<RectTransform>().rect.height;
-            spacing = layout.spacing;
-            card_index = 0;
-
             handler.onEndDrag.AddListener(onEndDragListener);
         }
 
-        #region Life cycle
-        public override void onRegister()
+        //public ScrollWordsMediator()
+        //{
+        //    this.scroll = scroll.GetComponent<ScrollRect>();
+        //    this.proxy_name = proxy_name;
+
+        //    //
+        //    this.content = this.scroll.content.transform;
+        //    this.content_rt = content.GetComponent<RectTransform>();
+        //    VerticalLayoutGroup layout = this.content.GetComponent<VerticalLayoutGroup>();
+
+        //    FIXED_WAITING_TIME = new WaitForSeconds(FIXED_TIME);
+        //    positions = new List<float>();
+        //    card_size = content.GetChild(index: 1).GetComponent<RectTransform>().rect.height;
+        //    spacing = layout.spacing;
+        //    card_index = 0;
+
+        //    //
+        //}
+
+
+
+        public override IEnumerable<string> subscribeNotifications()
         {
-            AppFacade.getInstance().registerCommand(ENotification.Speak, () =>
+            return new string[] 
             {
-                return new SpeakCommand();
-            });
-        }
-
-        public override void onRemove()
-        {
-            //AppFacade.getInstance().RemoveCommand();
-        } 
-        #endregion
-
-        public override ENotification[] registerNotifications()
-        {
-            return new ENotification[] { 
-                ENotification.VocabularyLoaded,
-                ENotification.FinishedReading
+                Notification.VocabularyLoaded,
+                Notification.FinishedReading
             };
         }
 
         public override void onNotificationListener(INotification notification)
         {
-            Utils.log($"Handle notification.Name: {notification.Name}");
-
-            ENotification en = (ENotification)Enum.Parse(typeof(ENotification), notification.Name);
-            Utils.log($"Handle notification: {en}");
-
-            switch (en)
+            switch (notification.getName())
             {
-                case ENotification.VocabularyLoaded:
+                case Notification.VocabularyLoaded:
                     loadVocabulary();
                     break;
 
                 // 當前單字念完
-                case ENotification.FinishedReading:
+                case Notification.FinishedReading:
                     nextVocabulary();
                     break;
             }
@@ -110,7 +98,7 @@ namespace vts.mvc
 
         void onEndDragListener(PointerEventData data)
         {
-            GameManager.getInstance().executeIEnumerator(alignCardCoroutine());
+            StartCoroutine(alignCardCoroutine());
         }
 
         /// <summary>
@@ -198,42 +186,42 @@ namespace vts.mvc
         // TODO: 根據 VocabularyProxy 生成列表，並更新 content 的高度(單字列表 + 上下空白區域)
         void loadVocabulary()
         {
-            VocabularyProxy vocabulary_proxy = AppFacade.getInstance().getProxy(proxy_name: proxy_name) as VocabularyProxy;
-            buttons = new List<Button>();
-            VocabularyNorm vocab;
-            Transform child;
-            Text label;
-            Button button;
+            //VocabularyProxy vocabulary_proxy = AppFacade.getInstance().getProxy(proxy_name: proxy_name) as VocabularyProxy;
+            //buttons = new List<Button>();
+            //VocabularyNorm vocab;
+            //Transform child;
+            //Text label;
+            //Button button;
 
-            int i, index;
-            n_card = content.childCount - 2;
-            float position = 0;
+            //int i, index;
+            //n_card = content.childCount - 2;
+            //float position = 0;
 
-            for (i = 0; i < n_card; i++)
-            {
-                index = i + 1;
-                child = content.GetChild(index: index);
-                positions.Add(position);
-                Utils.log($"Card {index} position: {position}");
+            //for (i = 0; i < n_card; i++)
+            //{
+            //    index = i + 1;
+            //    child = content.GetChild(index: index);
+            //    positions.Add(position);
+            //    Utils.log($"Card {index} position: {position}");
 
-                position += (card_size + spacing);
+            //    position += (card_size + spacing);
 
-                SpeakNorm norm = new SpeakNorm(proxy_name: proxy_name, index: index);
+            //    SpeakNorm norm = new SpeakNorm(proxy_name: proxy_name, index: index);
 
-                vocab = vocabulary_proxy.getVocabulary(index: index);
-                label = child.GetComponentInChildren(typeof(Text)) as Text;
-                label.text = $"{vocab.vocabulary} {vocab.description}";
+            //    vocab = vocabulary_proxy.getVocabulary(index: index);
+            //    label = child.GetComponentInChildren(typeof(Text)) as Text;
+            //    label.text = $"{vocab.vocabulary} {vocab.description}";
 
-                button = child.GetComponent<Button>();
+            //    button = child.GetComponent<Button>();
 
-                button.onClick.AddListener(()=> 
-                {
-                    // TODO: 將要使用的語言隨著 vocab 一起傳過去
-                    AppFacade.getInstance().sendNotification(ENotification.Speak, body: norm);
-                });
+            //    button.onClick.AddListener(()=> 
+            //    {
+            //        // TODO: 將要使用的語言隨著 vocab 一起傳過去
+            //        AppFacade.getInstance().sendNotification(ENotification.Speak, body: norm);
+            //    });
 
-                buttons.Add(button);
-            }
+            //    buttons.Add(button);
+            //}
         }
 
         void nextVocabulary()

@@ -24,10 +24,11 @@ namespace UnityMVC
 
         protected readonly ConcurrentDictionary<string, List<Action<INotification>>> notification_listeners;
 
+        public static string[] No_TIFICATION = new string[0];
+
         public Facade()
         {
             notification_listeners = new ConcurrentDictionary<string, List<Action<INotification>>>();
-
             initeModel();
             initeController();
             initeView();

@@ -9,7 +9,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using vts.mvc;
 
-namespace vts
+namespace VTS
 {
     // TODO: 中斷說話的函式 STOP()
     public class SpeechManager : MonoBehaviour, ISpeech

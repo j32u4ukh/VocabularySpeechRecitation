@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using vts.mvc;
+using UnityMVC;
 
-namespace vts
+namespace VTS
 {
-    public class BookmarkFragment : MonoBehaviour, IPointerDownHandler
+    public class BookmarkFragment : Mediator, IPointerDownHandler
     {
         #region 目前使用 Fragment 的物件名稱，可協助外部判斷是否有 切換 Bookmark，還是同一個 Bookmark 重複在點
         [HideInInspector] public const string speech = "SpeechFragment";
@@ -23,10 +23,6 @@ namespace vts
         
         private void Start()
         {
-            // 主畫面上方，頁籤區域
-            AppFacade.getInstance().registerMediator(new BookmarkFragmentMediator(mediator_name: vts.MediatorName.BookmarkFragment,
-                                                                                  component: gameObject));
-
             bookmarks = new Transform[] {
                 speech_bookmark.transform,
                 custom_bookmark.transform,
@@ -38,10 +34,11 @@ namespace vts
         public void OnPointerDown(PointerEventData eventData)
         {
             string bookmark = string.Empty;
+            Transform current = eventData.pointerCurrentRaycast.gameObject.transform;
 
             for (int i = 0; i < BOOKMARK_SIZE; i++)
             {
-                if (eventData.pointerCurrentRaycast.gameObject.transform.IsChildOf(bookmarks[i]))
+                if (current.IsChildOf(bookmarks[i]))
                 {
                     switch (i)
                     {
@@ -59,7 +56,7 @@ namespace vts
                             break;
                     }
 
-                    AppFacade.getInstance().sendNotification(ENotification.SwitchBookmark, type: bookmark);
+                    Facade.getInstance().sendNotification(Notification.SwitchBookmark, header: bookmark);
                     break;
                 }
             }

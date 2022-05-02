@@ -31,7 +31,7 @@ namespace UnityMVC
 
         public virtual IEnumerable<string> subscribeNotifications()
         {
-            return null;
+            return Facade.No_TIFICATION;
         }
 
         public virtual void onNotificationListener(INotification notification)

@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace vts.mvc
+namespace VTS
 {
     public class SpeakNorm
     {

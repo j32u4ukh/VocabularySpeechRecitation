@@ -11,6 +11,11 @@ namespace UnityMVC
         /// <summary>Mapping of Notification names to Command Class references</summary>
         protected readonly ConcurrentDictionary<string, ICommand> commands;
 
+        public Controller()
+        {
+            commands = new ConcurrentDictionary<string, ICommand>();
+        }
+
         public void register(ICommand commnad)
         {
             if (commands.TryAdd(commnad.getName(), commnad))

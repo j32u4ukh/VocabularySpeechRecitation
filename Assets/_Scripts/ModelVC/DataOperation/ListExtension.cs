@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
-using UnityEngine;
 
-namespace vts
+namespace VTS
 {
     public static class ListExtension
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace vts
+namespace VTS
 {
     public class StringEvent : UnityEvent<string> { }
 

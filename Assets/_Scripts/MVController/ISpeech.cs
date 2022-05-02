@@ -1,4 +1,4 @@
-namespace vts
+namespace VTS
 {
     public interface ISpeech
     {

@@ -1,22 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using vts.mvc;
+using UnityMVC;
 
-namespace vts
+namespace VTS
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : Command
     {
-        public MainActivity main;
-
-        private static GameManager instance = null;
-        private List<IEnumerator> enumerators = null;
         [SerializeField] private GameObject reporter;
-
-        private void Awake()
-        {
-            instance = this;
-        }
 
         private void Start()
         {
@@ -25,63 +16,42 @@ namespace vts
 #else
             reporter.SetActive(false);
 #endif
-
-            AppFacade.getInstance().init(main);
-
-            SpeechFragmentMediator.onCreateGroup += getInstantiate;
+        }
+        public override IEnumerable<string> subscribeNotifications()
+        {
+            return new string[] {
+                Notification.Speak
+            };
         }
 
-        public static GameManager getInstance()
+        public override void onNotificationListener(INotification notification)
         {
-            return instance;
-        }
-
-        public void addIEnumerator(IEnumerator enumerator)
-        {
-            if (enumerators == null)
+            switch (notification.getName())
             {
-                enumerators = new List<IEnumerator>();
-            }
-
-            enumerators.Add(enumerator);
-
-            if(enumerators.Count == 1)
-            {
-                StartCoroutine(executeIEnumerators());
+                case Notification.Speak:
+                    SpeakNorm norm = notification.getBody() as SpeakNorm;
+                    speak(norm: norm);
+                    break;
             }
         }
 
-        IEnumerator executeIEnumerators()
-        {
-            IEnumerator enumerator;
-
-            while(enumerators.Count > 0)
-            {
-                enumerator = enumerators[0];
-                yield return StartCoroutine(enumerator);
-                enumerators.RemoveAt(0);
-            }
-        }
-
-        /// <summary>
-        /// 讓沒有掛載 MonoBehaviour 的腳本也可執行 Coroutine
-        /// </summary>
-        /// <param name="enumerator"></param>
-        public void executeIEnumerator(IEnumerator enumerator)
-        {
-            StartCoroutine(enumerator);
-        }
-
-        public void getInstantiate(GameObject prefab, Transform parent)
+        public void speak(SpeakNorm norm)
         {
             Utils.log();
-            GameObject obj = Instantiate(prefab, parent);
+            VocabularyProxy proxy = Facade.getInstance().getProxy(name: norm.proxy_name) as VocabularyProxy;
+            VocabularyNorm vocab = proxy.getVocabulary(index: norm.index);
 
-        }
-
-        public void destory<T>(T garbage)
-        {
-            Destroy(garbage as UnityEngine.GameObject);
+            // 念誦指定的內容
+            SpeechManager.getInstance()
+                         .startReciteContent(vocab: vocab,
+                                             target: SystemLanguage.English,
+                                             describe: SystemLanguage.ChineseTraditional,
+                                             modes: Config.modes,
+                                             callback: () =>
+                                             {
+                                                 // 全部唸完，送出通知 ENotification.FinishedReading
+                                                 Facade.getInstance().sendNotification(Notification.FinishedReading, body: norm);
+                                             });
         }
     }
 }

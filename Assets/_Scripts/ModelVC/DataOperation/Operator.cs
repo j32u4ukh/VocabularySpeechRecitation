@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace vts.data_operation
+namespace VTS.DataOperation
 {
     public class Operator : MonoBehaviour
     {
