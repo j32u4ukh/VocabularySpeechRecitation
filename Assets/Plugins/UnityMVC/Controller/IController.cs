@@ -7,10 +7,10 @@ namespace UnityMVC
 {
     public interface IController
     {
-        void register(ICommand commnad);
+        void register(ICommander commnad);
 
         bool isExists(string name);
 
-        ICommand expulsion(string name);
+        ICommander expulsion(string name);
     }
 }

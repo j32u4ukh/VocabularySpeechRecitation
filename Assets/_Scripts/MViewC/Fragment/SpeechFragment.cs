@@ -39,39 +39,37 @@ namespace VTS
         {
             Utils.log();
 
-            //foreach (Transform child in content)
-            //{
-            //    GameManager.getInstance().destory(child);
-            //}
+            foreach (Transform child in content)
+            {
+                Destroy(child);
+            }
 
-            //SpeechFragmentProxy proxy = AppFacade.getInstance().getProxy(proxy_name: vts.ProxyName.GroupList) as SpeechFragmentProxy;
-            //Utils.log($"#group: {proxy.table.getRowNumber()}");
+            GroupListProxy group_list = Facade.getInstance().getProxy<GroupListProxy>();
+            Utils.log($"#group: {group_list.getRowNumber()}");
             GameObject obj;
             Button button;
 
-            //foreach (List<string> row in proxy.table.iterTable())
-            //{
-            //    Utils.log(row.toString());
+            foreach (List<string> row in group_list.iterTable())
+            {
+                obj = Instantiate(original: prefab, parent: content);
+                button = obj.GetComponent<Button>();
 
-            //    //obj = GameManager.getInstance().getInstantiate(prefab: prefab, parent: content);
-            //    //button = obj.GetComponent<Button>();
+                // 按鈕呈現文字，說明當前為哪個單字組(Group)
+                obj.GetComponentInChildren<Text>().text = row[0];
 
-            //    //// 按鈕呈現文字，說明當前為哪個單字組(Group)
-            //    //obj.GetComponent<Text>().text = row[0];
-            //    //Utils.log(row[0]);
+                button.onClick.AddListener(() =>
+                {
+                    //speechnorm norm = new speechnorm(mediator_name: vts.mediatorname.speechactivity,
+                    //                                 scroll: scroll.gameobject,
+                    //                                 proxy_name: proxyname.vocabularyproxy,
+                    //                                 target: systemlanguage.english,
+                    //                                 describe: systemlanguage.chinese,
+                    //                                 table_name: "table1");
 
-            //    //button.onClick.AddListener(() =>
-            //    //{
-            //    //    //SpeechNorm norm = new SpeechNorm(mediator_name: vts.MediatorName.SpeechActivity,
-            //    //    //                                 scroll: scroll.gameObject,
-            //    //    //                                 proxy_name: ProxyName.VocabularyProxy,
-            //    //    //                                 target: SystemLanguage.English,
-            //    //    //                                 describe: SystemLanguage.Chinese,
-            //    //    //                                 table_name: "table1");
-
-            //    //    //AppFacade.getInstance().sendNotification(ENotification.InitSpeech, body: norm);
-            //    //});
-            //}
+                    //appfacade.getinstance().sendnotification(enotification.initspeech, body: norm);
+                    Facade.getInstance().sendNotification(Notification.InitSpeechActivity);
+                });
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityMVC;
 
 namespace VTS
 {
-    public class SpeechActivityCommand : Command
+    public class SpeechActivityCommander : Commander
     {
         public override IEnumerable<string> subscribeNotifications()
         {
@@ -19,6 +19,7 @@ namespace VTS
             switch (notification.getName())
             {
                 case Notification.InitSpeechActivity:
+                    Utils.log(Notification.InitSpeechActivity);
                     break;
             }
         }

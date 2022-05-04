@@ -14,6 +14,7 @@ namespace VTS
             int i, len = list.Count;
             string format;
 
+            // TODO: 或許可以改用 typeof(T).Name
             /* Type to string 
              * float: System.Single
              * double: System.Double

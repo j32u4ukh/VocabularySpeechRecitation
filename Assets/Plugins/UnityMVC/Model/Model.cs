@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,7 +23,14 @@ namespace UnityMVC
 
         public virtual IProxy get(string name)
         {
-            return proxies.TryGetValue(name, out IProxy proxy) ? proxy : null;
+            if(proxies.TryGetValue(name, out IProxy proxy))
+            {
+                return proxy;
+            }
+
+            Debug.LogWarning($"[{GetType().Name}] get | Get IProxy({name}) failed.");
+
+            return null;
         }
 
         public virtual bool isExists(string name)
@@ -35,9 +43,12 @@ namespace UnityMVC
             if (proxies.TryRemove(name, out IProxy proxy))
             {
                 proxy.onExpulsion();
+                return proxy;
             }
 
-            return proxy;
+            Debug.LogWarning($"[{GetType().Name}] expulsion | IProxy({name}) is not exists.");
+
+            return null;
         }
     }
 }

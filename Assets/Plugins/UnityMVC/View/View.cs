@@ -16,7 +16,7 @@ namespace UnityMVC
             mediators = new ConcurrentDictionary<string, IMediator>();
         }
 
-        public virtual void register(IMediator mediator)
+        public void register(IMediator mediator)
         {
             if (mediators.TryAdd(mediator.getName(), mediator))
             {
@@ -25,7 +25,7 @@ namespace UnityMVC
  
                 foreach(string notification in notifications)
                 {
-                    Facade.getInstance().registerNotificationListener(notification, listener: mediator.onNotificationListener);
+                    Facade.getInstance().registerListener(notification, listener: mediator.onNotificationListener);
                 }
 
                 // alert the mediator that it has been registered
@@ -33,17 +33,17 @@ namespace UnityMVC
             }
         }
 
-        public virtual bool isExists(string name)
+        public bool isExists(string name)
         {
             return mediators.ContainsKey(name);
         }
         
-        public virtual IMediator get(string name)
+        public IMediator get(string name)
         {
             return mediators.TryGetValue(name, out IMediator mediator) ? mediator : null;
         }
 
-        public virtual IMediator expulsion(string name)
+        public IMediator expulsion(string name)
         {
             if (mediators.TryRemove(name, out IMediator mediator))
             {
@@ -52,7 +52,7 @@ namespace UnityMVC
 
                 foreach (string notification in notifications)
                 {
-                    Facade.getInstance().removeNotificationListener(notification, mediator.onNotificationListener);
+                    Facade.getInstance().removeListener(notification, mediator.onNotificationListener);
                 }
 
                 mediator.onExpulsion();

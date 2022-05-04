@@ -90,6 +90,11 @@ namespace VTS
         {
             return vocabularies[index];
         }
+
+        public override void release()
+        {
+
+        }
     }
 }
 

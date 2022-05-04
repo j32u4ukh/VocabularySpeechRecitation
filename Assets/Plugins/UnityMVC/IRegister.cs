@@ -1,17 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityMVC
+﻿namespace UnityMVC
 {
     public interface IRegister
     {
         /// <summary>
-        /// TODO: 似乎沒有必要 setName，可以考慮移除
-        /// 設置實體名稱
+        /// 設定實體名稱並進行註冊
         /// </summary>
-        /// <param name="name"></param>
-        void setName(string name);
+        /// <returns></returns>
+        public void register(string name);
 
         /// <summary>
         /// 取得實體名稱

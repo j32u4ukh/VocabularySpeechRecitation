@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityMVC;
 
 namespace VTS
 {
-    public class GameManager : Command
+    public class GameManager : Commander
     {
         [SerializeField] private GameObject reporter;
 
@@ -17,10 +17,12 @@ namespace VTS
             reporter.SetActive(false);
 #endif
         }
+
         public override IEnumerable<string> subscribeNotifications()
         {
             return new string[] {
-                Notification.Speak
+                Notification.Speak,
+                Notification.InitSpeechActivity
             };
         }
 
@@ -32,16 +34,19 @@ namespace VTS
                     SpeakNorm norm = notification.getBody() as SpeakNorm;
                     speak(norm: norm);
                     break;
+                case Notification.InitSpeechActivity:
+                    Utils.log(Notification.InitSpeechActivity);
+                    break;
             }
         }
 
         public void speak(SpeakNorm norm)
         {
             Utils.log();
-            VocabularyProxy proxy = Facade.getInstance().getProxy(name: norm.proxy_name) as VocabularyProxy;
+            VocabularyProxy proxy = Facade.getInstance().getProxy(proxy_name: norm.proxy_name) as VocabularyProxy;
             VocabularyNorm vocab = proxy.getVocabulary(index: norm.index);
 
-            // ©À»w«ü©wªº¤º®e
+            // å¿µèª¦æŒ‡å®šçš„å…§å®¹
             SpeechManager.getInstance()
                          .startReciteContent(vocab: vocab,
                                              target: SystemLanguage.English,
@@ -49,7 +54,7 @@ namespace VTS
                                              modes: Config.modes,
                                              callback: () =>
                                              {
-                                                 // ¥ş³¡°á§¹¡A°e¥X³qª¾ ENotification.FinishedReading
+                                                 // å…¨éƒ¨å”¸å®Œï¼Œé€å‡ºé€šçŸ¥ ENotification.FinishedReading
                                                  Facade.getInstance().sendNotification(Notification.FinishedReading, body: norm);
                                              });
         }

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,22 +6,29 @@ namespace VTS
 {
     public class Notification
     {
-        // ¤Á´«®ÑÅÒ
+        #region MainActivity (ä¸€é–‹å§‹å°±æ˜¯é–‹è‘—ï¼Œæœƒè‡ªè¡Œåˆå§‹åŒ–ï¼Œå› æ­¤æ²’æœ‰ InitMainActivity äº‹ä»¶)
+        // åˆ‡æ›æ›¸ç±¤
         public const string SwitchBookmark = "SwitchBookmark";
 
-        // ªì©l¤Æ SpeechActivity
+        // è¦æ±‚è¼‰å…¥å–®å­—çµ„æ¸…å–®
+        public const string InitGroupList = "InitGroupList";
+
+        // å–®å­—çµ„æ¸…å–®è¼‰å…¥å®Œæˆ
+        public const string GroupListLoaded = "GroupListLoaded";
+        #endregion
+
+        #region InitSpeechActivity
+        // åˆå§‹åŒ– SpeechActivity
         public const string InitSpeechActivity = "InitSpeechActivity";
 
-        // ³æ¦r²Õ²M³æ¸ü¤J§¹¦¨
-        public const string GroupListLoaded = "GroupListLoaded";
-
-        // ³æ¦r¸ü¤J§¹¦¨
+        // å–®å­—è¼‰å…¥å®Œæˆ
         public const string VocabularyLoaded = "VocabularyLoaded";
 
-        // ©À³æ¦r(»P¥¦ªº»¡©ú)
+        // å¿µå–®å­—(èˆ‡å®ƒçš„èªªæ˜)
         public const string Speak = "Speak";
 
-        // ·í«e³æ¦r©À§¹
-        public const string FinishedReading = "FinishedReading";
+        // ç•¶å‰å–®å­—å¿µå®Œ
+        public const string FinishedReading = "FinishedReading"; 
+        #endregion
     }
 }

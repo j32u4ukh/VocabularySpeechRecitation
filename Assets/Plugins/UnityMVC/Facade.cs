@@ -11,15 +11,12 @@ namespace UnityMVC
         private static Facade instance = null;
 
         // 透過 IProxy 對 數據 進行管理
-        /// <summary>References to Model</summary>
         protected Model model;
 
         // 透過 IMediator 對 UI 進行管理
-        /// <summary>References to View</summary>
         protected View view;
 
-        // 透過 ICommand 對 命令/流程 進行管理
-        /// <summary>References to Controller</summary>
+        // 透過 ICommander 對 命令/流程 進行管理
         protected Controller controller;
 
         protected readonly ConcurrentDictionary<string, List<Action<INotification>>> notification_listeners;
@@ -50,43 +47,34 @@ namespace UnityMVC
             model = new Model();
         } 
         
-        /// <summary>
-        /// Register an <c>IProxy</c> with the <c>Model</c> by name.
-        /// </summary>
-        /// <param name="proxy">the <c>IProxy</c> instance to be registered with the <c>Model</c>.</param>
         public virtual void registerProxy(IProxy proxy)
         {
             model.register(proxy);
         }
 
-        /// <summary>
-        /// Retrieve an <c>IProxy</c> from the <c>Model</c> by name.
-        /// </summary>
-        /// <param name="name">the name of the proxy to be retrieved.</param>
-        /// <returns>the <c>IProxy</c> instance previously registered with the given <c>proxyName</c>.</returns>
-        public virtual IProxy getProxy(string name)
+        public virtual T getProxy<T>(string proxy_name = null) where T : class
         {
-            return model.get(name);
+            if (string.IsNullOrEmpty(proxy_name))
+            {
+                proxy_name = typeof(T).Name;
+            }
+
+            return getProxy(proxy_name: proxy_name) as T;
         }
 
-        /// <summary>
-        /// Remove an <c>IProxy</c> from the <c>Model</c> by name.
-        /// </summary>
-        /// <param name="proxyName">the <c>IProxy</c> to remove from the <c>Model</c>.</param>
-        /// <returns>the <c>IProxy</c> that was removed from the <c>Model</c></returns>
-        public virtual IProxy removeProxy(string proxyName)
+        public virtual IProxy getProxy(string proxy_name)
         {
-            return model.expulsion(proxyName);
+            return model.get(proxy_name);
         }
 
-        /// <summary>
-        /// Check if a Proxy is registered
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>whether a Proxy is currently registered with the given <c>proxyName</c>.</returns>
-        public virtual bool isProxyExists(string name)
+        public virtual IProxy expulsionProxy(string proxy_name)
         {
-            return model.isExists(name);
+            return model.expulsion(proxy_name);
+        }
+
+        public virtual bool isProxyExists(string proxy_name)
+        {
+            return model.isExists(proxy_name);
         }
         #endregion
 
@@ -96,43 +84,24 @@ namespace UnityMVC
             view = new View();
         }
 
-        /// <summary>
-        /// Register a <c>IMediator</c> with the <c>View</c>.
-        /// </summary>
-        /// <param name="mediator">a reference to the <c>IMediator</c></param>
         public virtual void registerMediator(IMediator mediator)
         {
             view.register(mediator);
         }
 
-        /// <summary>
-        /// Retrieve an <c>IMediator</c> from the <c>View</c>.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>the <c>IMediator</c> previously registered with the given <c>mediatorName</c>.</returns>
-        public virtual IMediator getMediator(string name)
+        public virtual IMediator getMediator(string mediator_name)
         {
-            return view.get(name);
+            return view.get(mediator_name);
         }
 
-        /// <summary>
-        /// Remove an <c>IMediator</c> from the <c>View</c>.
-        /// </summary>
-        /// <param name="name">name of the <c>IMediator</c> to be removed.</param>
-        /// <returns>the <c>IMediator</c> that was removed from the <c>View</c></returns>
-        public virtual IMediator removeMediator(string name)
+        public virtual IMediator expulsionMediator(string mediator_name)
         {
-            return view.expulsion(name);
+            return view.expulsion(mediator_name);
         }
 
-        /// <summary>
-        /// Check if a Mediator is registered or not
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>whether a Mediator is registered with the given <c>mediatorName</c>.</returns>
-        public virtual bool isMediatorExists(string name)
+        public virtual bool isMediatorExists(string mediator_name)
         {
-            return view.isExists(name);
+            return view.isExists(mediator_name);
         }
         #endregion
 
@@ -142,49 +111,24 @@ namespace UnityMVC
             controller = new Controller();
         }
 
-        /// <summary>
-        /// Register an <c>ICommand</c> with the <c>Controller</c> by Notification name.
-        /// </summary>
-        /// <param name="notification_name">the name of the <c>INotification</c> to associate the <c>ICommand</c> with</param>
-        /// <param name="func">a reference to the Class of the <c>ICommand</c></param>
-        public virtual void registerCommand(ICommand commnad)
+        public virtual void registerCommander(ICommander commander)
         {
-            controller.register(commnad);
+            controller.register(commander);
         }
 
-        /// <summary>
-        /// Remove a previously registered <c>ICommand</c> to <c>INotification</c> mapping from the Controller.
-        /// </summary>
-        /// <param name="notification_name">the name of the <c>INotification</c> to remove the <c>ICommand</c> mapping for</param>
-        public virtual void removeCommand(string notification_name)
+        public virtual void expulsionCommander(string commander_name)
         {
-            controller.expulsion(notification_name);
+            controller.expulsion(commander_name);
         }
 
-        /// <summary>
-        /// Check if a Command is registered for a given Notification 
-        /// </summary>
-        /// <param name="notification_name"></param>
-        /// <returns>whether a Command is currently registered for the given <c>notificationName</c>.</returns>
-        public virtual bool isCommandExists(string notification_name)
+
+        public virtual bool isCommanderExists(string commander_name)
         {
-            return controller.isExists(notification_name);
+            return controller.isExists(commander_name);
         }
         #endregion
 
         #region Notification
-        /// <summary>
-        /// Create and send an <c>INotification</c>.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Keeps us from having to construct new notification 
-        ///         instances in our implementation code.
-        ///     </para>
-        /// </remarks>
-        /// <param name="notification_name">the name of the notiification to send</param>
-        /// <param name="body">the body of the notification (optional)</param>
-        /// <param name="type">type the type of the notification (optional)</param>
         public virtual void sendNotification(string notification_name, object body = null, string header = null)
         {
             // Get a reference to the observers list for this notification name
@@ -200,7 +144,7 @@ namespace UnityMVC
             }
         }
 
-        public void registerNotificationListener(string notification_name, Action<INotification> listener)
+        public virtual void registerListener(string notification_name, Action<INotification> listener)
         {
             if (notification_listeners.TryGetValue(notification_name, out List<Action<INotification>> listeners))
             {
@@ -212,7 +156,7 @@ namespace UnityMVC
             }
         }
 
-        public void removeNotificationListener(string notification_name, Action<INotification> listener)
+        public virtual void removeListener(string notification_name, Action<INotification> listener)
         {
             if (notification_listeners.TryGetValue(notification_name, out List<Action<INotification>> listeners))
             {

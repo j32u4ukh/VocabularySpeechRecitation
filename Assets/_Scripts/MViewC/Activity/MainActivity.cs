@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityMVC;
@@ -24,6 +24,9 @@ namespace VTS
         private void Start()
         {
             current = speech_fragment;
+
+            // è¦æ±‚è¼‰å…¥å–®å­—çµ„æ¸…å–®
+            Facade.getInstance().sendNotification(Notification.InitGroupList);
         }
 
         public override IEnumerable<string> subscribeNotifications()
@@ -35,7 +38,7 @@ namespace VTS
 
         public override void onNotificationListener(INotification notification)
         {
-            // ®Ú¾Ú³qª¾ªº¦WºÙ§@¬ÛÀ³ªº³B²z
+            // æ ¹æ“šé€šçŸ¥çš„åç¨±ä½œç›¸æ‡‰çš„è™•ç†
             switch (notification.getName())
             {
                 case Notification.SwitchBookmark:
@@ -46,7 +49,7 @@ namespace VTS
 
         void switchBookmark(string bookmark)
         {
-            // ­YÂI¿ïªº©M·í«e­¶ÅÒ¬Û¦P¡A«hµL»İ¤Á´«
+            // è‹¥é»é¸çš„å’Œç•¶å‰é ç±¤ç›¸åŒï¼Œå‰‡ç„¡éœ€åˆ‡æ›
             if (current.name.Equals(bookmark))
             {
                 return;

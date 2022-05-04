@@ -3400,6 +3400,7 @@ GameObject:
   m_Component:
   - component: {fileID: 677462753}
   - component: {fileID: 677462754}
+  - component: {fileID: 677462755}
   m_Layer: 5
   m_Name: SpeechActivity
   m_TagString: Untagged
@@ -3440,9 +3441,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scroll: {fileID: 876061673}
-  card_prefab: {fileID: 0}
+  card_prefab: {fileID: 6202067532246997303, guid: ddbd5bde0f222cd4fbaa0966bdfcb44d, type: 3}
   left: {x: 0, y: 1080}
   right: {x: 1080, y: 1080}
+--- !u!114 &677462755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677462752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 633b8b80fd5aa914f8d0df7d637cae0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &687334887
 GameObject:
   m_ObjectHideFlags: 0
@@ -3806,7 +3819,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd724befce3aab74eb04d889296df18c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  main: {fileID: 1142862823}
   reporter: {fileID: 1613024547}
 --- !u!1 &714866527
 GameObject:
@@ -5217,6 +5229,7 @@ GameObject:
   - component: {fileID: 1142862825}
   - component: {fileID: 1142862824}
   - component: {fileID: 1142862823}
+  - component: {fileID: 1142862826}
   m_Layer: 5
   m_Name: MainActivity
   m_TagString: Untagged
@@ -5304,6 +5317,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1142862821}
   m_CullTransparentMesh: 1
+--- !u!114 &1142862826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142862821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff4cd9e3fb65397479e75900710be0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1146339713
 GameObject:
   m_ObjectHideFlags: 0

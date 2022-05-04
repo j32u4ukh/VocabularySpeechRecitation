@@ -9,14 +9,14 @@ namespace UnityMVC
     public class Controller : IController
     {
         /// <summary>Mapping of Notification names to Command Class references</summary>
-        protected readonly ConcurrentDictionary<string, ICommand> commands;
+        protected readonly ConcurrentDictionary<string, ICommander> commands;
 
         public Controller()
         {
-            commands = new ConcurrentDictionary<string, ICommand>();
+            commands = new ConcurrentDictionary<string, ICommander>();
         }
 
-        public void register(ICommand commnad)
+        public void register(ICommander commnad)
         {
             if (commands.TryAdd(commnad.getName(), commnad))
             {
@@ -25,7 +25,7 @@ namespace UnityMVC
 
                 foreach (string notification in notifications)
                 {
-                    Facade.getInstance().registerNotificationListener(notification, listener: commnad.onNotificationListener);
+                    Facade.getInstance().registerListener(notification, listener: commnad.onNotificationListener);
                 }
 
                 // alert the mediator that it has been registered
@@ -38,16 +38,16 @@ namespace UnityMVC
             return commands.ContainsKey(name);
         }
 
-        public ICommand expulsion(string name)
+        public ICommander expulsion(string name)
         {
-            if (commands.TryRemove(name, out ICommand command))
+            if (commands.TryRemove(name, out ICommander command))
             {
                 // Mediator 感興趣的 Notification 們的名稱
                 IEnumerable<string> notifications = command.subscribeNotifications();
 
                 foreach (string notification in notifications)
                 {
-                    Facade.getInstance().removeNotificationListener(notification, command.onNotificationListener);
+                    Facade.getInstance().removeListener(notification, command.onNotificationListener);
                 }
 
                 command.onExpulsion();
