@@ -30,12 +30,12 @@ namespace VTS
         {
             switch (notification.getName())
             {
-                case Notification.Speak:
-                    SpeakNorm norm = notification.getBody() as SpeakNorm;
-                    speak(norm: norm);
-                    break;
                 case Notification.InitSpeechActivity:
                     Utils.log(Notification.InitSpeechActivity);
+                    break;
+                case Notification.Speak:
+                    SpeakNorm norm = notification.getData() as SpeakNorm;
+                    speak(norm: norm);
                     break;
             }
         }
@@ -55,7 +55,7 @@ namespace VTS
                                              callback: () =>
                                              {
                                                  // 全部唸完，送出通知 ENotification.FinishedReading
-                                                 Facade.getInstance().sendNotification(Notification.FinishedReading, body: norm);
+                                                 Facade.getInstance().sendNotification(Notification.FinishedReading, data: norm);
                                              });
         }
     }

@@ -19,7 +19,13 @@ namespace VTS
             switch (notification.getName())
             {
                 case Notification.InitSpeechActivity:
-                    Utils.log(Notification.InitSpeechActivity);
+                    (int, int) data = notification.getData<int, int>();
+
+                    if (data.Item1.Equals(1))
+                    {
+                        Utils.log(Notification.InitSpeechActivity);
+                        Utils.log($"value: {data.Item2}");
+                    }
                     break;
             }
         }

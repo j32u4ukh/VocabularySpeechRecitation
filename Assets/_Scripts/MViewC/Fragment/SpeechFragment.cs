@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -67,7 +68,7 @@ namespace VTS
                     //                                 table_name: "table1");
 
                     //appfacade.getinstance().sendnotification(enotification.initspeech, body: norm);
-                    Facade.getInstance().sendNotification(Notification.InitSpeechActivity);
+                    Facade.getInstance().sendNotification(Notification.InitSpeechActivity, data: (0, 1));
                 });
             }
         }

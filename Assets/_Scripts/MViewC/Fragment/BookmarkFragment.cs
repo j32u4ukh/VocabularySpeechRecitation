@@ -56,7 +56,7 @@ namespace VTS
                             break;
                     }
 
-                    Facade.getInstance().sendNotification(Notification.SwitchBookmark, header: bookmark);
+                    Facade.getInstance().sendNotification(Notification.SwitchBookmark, data: bookmark);
                     break;
                 }
             }

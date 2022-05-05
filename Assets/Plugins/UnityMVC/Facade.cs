@@ -129,13 +129,13 @@ namespace UnityMVC
         #endregion
 
         #region Notification
-        public virtual void sendNotification(string notification_name, object body = null, string header = null)
+        public virtual void sendNotification(string notification_name, object data = null)
         {
             // Get a reference to the observers list for this notification name
             if (notification_listeners.TryGetValue(notification_name, out List<Action<INotification>> ref_listeners))
             {
                 List<Action<INotification>> listeners = new List<Action<INotification>>(ref_listeners);
-                Notification notification = new Notification(notification_name, body, header);
+                Notification notification = new Notification(notification_name, data);
 
                 foreach (Action<INotification> listener in listeners)
                 {

@@ -42,7 +42,7 @@ namespace VTS
             switch (notification.getName())
             {
                 case Notification.SwitchBookmark:
-                    switchBookmark(bookmark: notification.getHeader());
+                    switchBookmark(bookmark: notification.getData<string>());
                     break;
             }
         }
