@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityMVC
@@ -19,7 +18,7 @@ namespace UnityMVC
 
         public virtual void OnDestroy()
         {
-            Facade.getInstance().expulsionMediator(mediator_name: mediator_name);
+            Facade.getInstance().releaseMediator(mediator_name: mediator_name);
         }
 
         public virtual void register(string name)
@@ -38,7 +37,7 @@ namespace UnityMVC
 
         }
 
-        public virtual void onExpulsion()
+        public virtual void onRelease()
         {
 
         }

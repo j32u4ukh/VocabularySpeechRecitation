@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace VTS.DataOperation
@@ -12,16 +13,22 @@ namespace VTS.DataOperation
         {
             string result = string.Empty;
 
-#if UNITY_EDITOR || UNITY_IOS
-            using (StreamReader reader = new StreamReader(path: path, encoding: System.Text.Encoding.UTF8))
+            if(Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                result = reader.ReadToEnd();
+                using (StreamReader reader = new StreamReader(path: path, encoding: System.Text.Encoding.UTF8))
+                {
+                    result = reader.ReadToEnd();
+                }
             }
-#elif UNITY_ANDROID
-            result = readAndroidFile(path: path);
-#else
-            Utils.warn("當前環境不為 Editor、iOS 或 Android，因此內容為空");
-#endif
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                result = readAndroidFile(path: path);
+            }
+            else
+            {
+                Utils.warn("當前環境不為 Editor、iOS 或 Android，因此內容為空");
+            }
+
             return result;
         }
 
@@ -48,16 +55,22 @@ namespace VTS.DataOperation
         {
             string result = string.Empty;
 
-#if UNITY_EDITOR || UNITY_IOS
-            using (StreamReader reader = new StreamReader(path: path, encoding: System.Text.Encoding.UTF8))
+            if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                result = await reader.ReadToEndAsync();
+                using (StreamReader reader = new StreamReader(path: path, encoding: System.Text.Encoding.UTF8))
+                {
+                    result = await reader.ReadToEndAsync();
+                }
             }
-#elif UNITY_ANDROID
-            result = await readAndroidFileAsync(path: path);
-#else
-            Utils.warn("當前環境不為 Editor、iOS 或 Android，因此內容為空");
-#endif
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                result = await readAndroidFileAsync(path: path);
+            }
+            else
+            {
+                Utils.warn("當前環境不為 Editor、iOS 或 Android，因此內容為空");
+            }
+
             return result;
         }
 

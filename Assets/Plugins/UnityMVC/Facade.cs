@@ -79,9 +79,9 @@ namespace UnityMVC
             return model.get(proxy_name);
         }
 
-        public virtual IProxy expulsionProxy(string proxy_name)
+        public virtual IProxy releaseProxy(string proxy_name)
         {
-            return model.expulsion(proxy_name);
+            return model.release(proxy_name);
         }
 
         public virtual bool isProxyExists(string proxy_name)
@@ -106,9 +106,9 @@ namespace UnityMVC
             return view.get(mediator_name);
         }
 
-        public virtual IMediator expulsionMediator(string mediator_name)
+        public virtual IMediator releaseMediator(string mediator_name)
         {
-            return view.expulsion(mediator_name);
+            return view.release(mediator_name);
         }
 
         public virtual bool isMediatorExists(string mediator_name)
@@ -128,11 +128,10 @@ namespace UnityMVC
             controller.register(commander);
         }
 
-        public virtual void expulsionCommander(string commander_name)
+        public virtual void releaseCommander(string commander_name)
         {
-            controller.expulsion(commander_name);
+            controller.release(commander_name);
         }
-
 
         public virtual bool isCommanderExists(string commander_name)
         {
@@ -168,7 +167,7 @@ namespace UnityMVC
             }
         }
 
-        public virtual void removeListener(string notification_name, Action<INotification> listener)
+        public virtual void releaseListener(string notification_name, Action<INotification> listener)
         {
             if (notification_listeners.TryGetValue(notification_name, out List<Action<INotification>> listeners))
             {

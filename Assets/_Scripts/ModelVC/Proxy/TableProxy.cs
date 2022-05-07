@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityMVC;
 using VTS.DataOperation;
 
@@ -52,7 +50,7 @@ namespace VTS
         public override void release()
         {
             table.release();
-            Facade.getInstance().expulsionProxy(proxy_name: proxy_name);
+            Facade.getInstance().releaseProxy(proxy_name: proxy_name);
         }
     }
 }

@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace UnityMVC
 {
     public interface IModel
@@ -12,6 +8,6 @@ namespace UnityMVC
 
         IProxy get(string name);
 
-        IProxy expulsion(string name);
+        IProxy release(string name);
     }
 }

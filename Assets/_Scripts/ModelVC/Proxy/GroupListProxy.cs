@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using UnityMVC;
-using VTS.DataOperation;
 
 namespace VTS
 {

@@ -22,6 +22,6 @@
         /// <summary>
         /// 移除實體後呼叫
         /// </summary>
-        void onExpulsion();
+        void onRelease();
     }
 }

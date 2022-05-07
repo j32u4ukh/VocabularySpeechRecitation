@@ -1,13 +1,8 @@
 ﻿using SpeechLib;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using vts.mvc;
 
 namespace VTS
 {
@@ -52,27 +47,29 @@ namespace VTS
             wait = new WaitForSeconds(wait_time);
             interval = new WaitForSeconds(interval_time);
 
-#if UNITY_EDITOR
-            voice = new SpVoice();
-            tokens = voice.GetVoices(string.Empty, string.Empty);
-            controller.gameObject.SetActive(false);
+            if(Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                voice = new SpVoice();
+                tokens = voice.GetVoices(string.Empty, string.Empty);
+                controller.gameObject.SetActive(false);
 
-            onStatus += onStatusListener;
-            onStart += onStartListener;
-            onDone += onDoneListener;
-            onStop += onStopListener;
+                onStatus += onStatusListener;
+                onStart += onStartListener;
+                onDone += onDoneListener;
+                onStop += onStopListener;
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                controller.gameObject.SetActive(true);
 
-#elif UNITY_ANDROID
-            controller.gameObject.SetActive(true);
+                controller.OnStatus.AddListener(onStatusListener);
+                controller.OnStart.AddListener(onStartListener);
+                controller.OnDone.AddListener(onDoneListener);
+                controller.OnStop.AddListener(onStopListener);
 
-            controller.OnStatus.AddListener(onStatusListener);
-            controller.OnStart.AddListener(onStartListener);
-            controller.OnDone.AddListener(onDoneListener);
-            controller.OnStop.AddListener(onStopListener);
-
-            // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
-            StartCoroutine(preSetLanguage());
-#endif
+                // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
+                StartCoroutine(preSetLanguage());
+            }
         }
 
         public static SpeechManager getInstance()
@@ -83,25 +80,21 @@ namespace VTS
         #region 實作 ISpeech
         public void onStatusListener(string message)
         {
-            Utils.log($"message: {message}");
             setState(state: State.Status);
         }
 
         public void onStartListener()
         {
-            //Utils.log();
             setState(state: State.Start);
         }
 
         public void onDoneListener()
         {
-            //Utils.log();
             setState(state: State.Done);
         }
 
         public void onStopListener(string message)
         {
-            Utils.log($"message: {message}");
             setState(state: State.Stop);
         }
         #endregion
@@ -124,58 +117,60 @@ namespace VTS
         /// <param name="language"></param>
         public void setLanguage(SystemLanguage language)
         {
-            Utils.log($"language: {language}");
-
-#if UNITY_EDITOR
-            string lang = language.ToString();
-
-            // 會因不同電腦有安裝的語言套件而有所不同，這裡的索引值對應的語言是在我的電腦才成立的，
-            // 但本來也就不是要提供電腦版，只是方便測試才讓電腦版也可以發聲
-            switch (language)
+            if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                case SystemLanguage.English:
-                    voice.Voice = tokens.Item(1);
-                    break;
-                case SystemLanguage.Japanese:
-                    voice.Voice = tokens.Item(2);
-                    break;
-                case SystemLanguage.ChineseTraditional:
-                case SystemLanguage.Chinese:
-                default:
-                    voice.Voice = tokens.Item(0);
-                    lang = SystemLanguage.Chinese.ToString();
-                    break;
+                string lang = language.ToString();
+
+                // 會因不同電腦有安裝的語言套件而有所不同，這裡的索引值對應的語言是在我的電腦才成立的，
+                // 但本來也就不是要提供電腦版，只是方便測試才讓電腦版也可以發聲
+                switch (language)
+                {
+                    case SystemLanguage.English:
+                        voice.Voice = tokens.Item(1);
+                        break;
+                    case SystemLanguage.Japanese:
+                        voice.Voice = tokens.Item(2);
+                        break;
+                    case SystemLanguage.ChineseTraditional:
+                    case SystemLanguage.Chinese:
+                    default:
+                        voice.Voice = tokens.Item(0);
+                        lang = SystemLanguage.Chinese.ToString();
+                        break;
+                }
+
+                onStatus?.Invoke($"Set language to {lang}");
             }
-
-            onStatus?.Invoke($"Set language to {lang}");
-
-#elif UNITY_ANDROID
-            string language_code = Utils.getLanguageCode(language: language);
-
-            if(language_code != null)
+            else if (Application.platform == RuntimePlatform.Android)
             {
-                controller.Locale = language_code;
+                string language_code = Utils.getLanguageCode(language: language);
+
+                if (language_code != null)
+                {
+                    controller.Locale = language_code;
+                }
+                else
+                {
+                    controller.Locale = Utils.getLanguageCode(language: SystemLanguage.ChineseTraditional);
+                }
             }
-            else
-            {
-                controller.Locale = Utils.getLanguageCode(language: SystemLanguage.ChineseTraditional);
-            }
-#endif
         }
 
         public void speak(string content)
         {
             Utils.log($"content: {content}");
 
-#if UNITY_EDITOR
-            onStart?.Invoke();
-            voice.Speak(content);
-            onDone?.Invoke();
-
-#elif UNITY_ANDROID
-            setState(state: State.Start);
-            controller.StartSpeech(content);
-#endif
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                onStart?.Invoke();
+                voice.Speak(content);
+                onDone?.Invoke();
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                setState(state: State.Start);
+                controller.StartSpeech(content);
+            }
         }
 
         /// <summary>
@@ -187,14 +182,16 @@ namespace VTS
         {
             setState(state: State.Idle);
 
-#if UNITY_EDITOR
-            // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
-            voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
-            onStatus?.Invoke($"Set speed to {voice.Rate}");
-
-#elif UNITY_ANDROID
-            controller.Speed = speed;
-#endif
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
+                voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
+                onStatus?.Invoke($"Set speed to {voice.Rate}");
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                controller.Speed = speed;
+            }
         }
 
         public void startReciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)

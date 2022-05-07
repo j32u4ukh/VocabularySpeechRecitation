@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-
-namespace UnityMVC
+﻿namespace UnityMVC
 {
     public abstract class Proxy : IProxy
     {
@@ -37,7 +32,7 @@ namespace UnityMVC
 
         }
 
-        public virtual void onExpulsion()
+        public virtual void onRelease()
         {
 
         } 

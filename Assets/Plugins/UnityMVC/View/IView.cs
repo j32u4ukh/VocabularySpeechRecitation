@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace UnityMVC
 {
     public interface IView
@@ -12,6 +8,6 @@ namespace UnityMVC
 
         IMediator get(string name);
 
-        IMediator expulsion(string name);
+        IMediator release(string name);
     }
 }

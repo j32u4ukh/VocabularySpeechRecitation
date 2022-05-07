@@ -1,12 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace VTS
 {
     [RequireComponent(typeof(ScrollRect))]
-    public class ScrollViewHandler : MonoBehaviour, IInitializePotentialDragHandler, IEventSystemHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup, ILayoutController
+    public class ScrollViewHandler : MonoBehaviour, IInitializePotentialDragHandler, IEventSystemHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, 
+                                     IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup, ILayoutController
     {
+        public PointerEventEvent onPointerDown = new PointerEventEvent();
         public PointerEventEvent onDrag = new PointerEventEvent();
         public PointerEventEvent onScroll = new PointerEventEvent();
         public PointerEventEvent onEndDrag = new PointerEventEvent();
@@ -32,10 +34,10 @@ namespace VTS
             scroll = GetComponentInParent<ScrollRect>();
         }
 
-        #region �즲�ƥ�
+        #region 拖曳事件
         public void OnInitializePotentialDrag(PointerEventData eventData)
         {
-
+            onPointerDown.Invoke(eventData);
         }
         
         public void OnBeginDrag(PointerEventData eventData)

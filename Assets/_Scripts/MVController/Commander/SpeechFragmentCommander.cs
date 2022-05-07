@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityMVC;
 
 namespace VTS
@@ -32,23 +33,27 @@ namespace VTS
         void nextVocabulary()
         {
             int card_index = fragment.getCardIndex();
-            Utils.log($"card_index: {card_index}, n_card: {fragment.getCardNumber()}");
 
             if (card_index + 1 < fragment.getCardNumber())
             {
-                card_index++;
-                Utils.log($"Next card_index: {card_index}");
-
-                fragment.setCardIndex(index: card_index);
-                Utils.log($"Curent card_index: {fragment.getCardIndex()}");
-
-                //fragment.alignCard();
-                fragment.getCard(index: card_index).onClick.Invoke();
+                StartCoroutine(nextVocabularyCoroutine(index: card_index + 1));
             }
             else
             {
 
             }
+        }
+
+        IEnumerator nextVocabularyCoroutine(int index)
+        {
+            // 設置目標卡片索引值
+            fragment.setCardIndex(index: index);
+
+            // 等待目標卡片移到中線位置
+            yield return StartCoroutine(fragment.alignCardCoroutine(index: index));
+
+            // 觸發目標卡片以念誦單字
+            fragment.getCard(index: index).onClick.Invoke();
         }
     }
 }

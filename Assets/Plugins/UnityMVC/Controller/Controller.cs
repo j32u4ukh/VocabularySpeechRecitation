@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityMVC
 {
@@ -38,7 +35,7 @@ namespace UnityMVC
             return commands.ContainsKey(name);
         }
 
-        public ICommander expulsion(string name)
+        public ICommander release(string name)
         {
             if (commands.TryRemove(name, out ICommander command))
             {
@@ -47,10 +44,10 @@ namespace UnityMVC
 
                 foreach (string notification in notifications)
                 {
-                    Facade.getInstance().removeListener(notification, command.onNotificationListener);
+                    Facade.getInstance().releaseListener(notification, command.onNotificationListener);
                 }
 
-                command.onExpulsion();
+                command.onRelease();
             }
 
             return command;

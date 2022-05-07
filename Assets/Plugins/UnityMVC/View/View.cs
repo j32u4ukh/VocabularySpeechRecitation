@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityMVC
 {
@@ -43,7 +41,7 @@ namespace UnityMVC
             return mediators.TryGetValue(name, out IMediator mediator) ? mediator : null;
         }
 
-        public IMediator expulsion(string name)
+        public IMediator release(string name)
         {
             if (mediators.TryRemove(name, out IMediator mediator))
             {
@@ -52,10 +50,10 @@ namespace UnityMVC
 
                 foreach (string notification in notifications)
                 {
-                    Facade.getInstance().removeListener(notification, mediator.onNotificationListener);
+                    Facade.getInstance().releaseListener(notification, mediator.onNotificationListener);
                 }
 
-                mediator.onExpulsion();
+                mediator.onRelease();
             }
 
             return mediator;

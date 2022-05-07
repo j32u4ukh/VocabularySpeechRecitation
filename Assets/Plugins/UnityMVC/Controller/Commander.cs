@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityMVC
@@ -20,7 +18,7 @@ namespace UnityMVC
 
         public virtual void OnDestroy()
         {
-            Facade.getInstance().expulsionCommander(commander_name: commander_name);
+            Facade.getInstance().releaseCommander(commander_name: commander_name);
         }
 
         public virtual void register(string name)
@@ -49,7 +47,7 @@ namespace UnityMVC
 
         }
 
-        public virtual void onExpulsion()
+        public virtual void onRelease()
         {
 
         }

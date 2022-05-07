@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityMVC
@@ -38,11 +35,11 @@ namespace UnityMVC
             return proxies.ContainsKey(name);
         }
 
-        public virtual IProxy expulsion(string name)
+        public virtual IProxy release(string name)
         {
             if (proxies.TryRemove(name, out IProxy proxy))
             {
-                proxy.onExpulsion();
+                proxy.onRelease();
                 return proxy;
             }
 

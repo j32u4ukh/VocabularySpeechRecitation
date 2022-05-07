@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -57,6 +57,7 @@ namespace VTS
             FIXED_WAITING_TIME = new WaitForSeconds(FIXED_TIME);
 
             ScrollViewHandler handler = GetComponent<ScrollViewHandler>();
+            handler.onPointerDown.AddListener(onPointerDownListener);
             handler.onEndDrag.AddListener(onEndDragListener);
         }
 
@@ -94,10 +95,14 @@ namespace VTS
 
                 // 當前單字念完
                 case Notification.FinishedReading:
-                    Utils.log();
                     Facade.getInstance().sendNotification(Notification.NextVocabulary);
                     break;
             }
+        }
+
+        void onPointerDownListener(PointerEventData data)
+        {
+            // TODO: send notification to stop speaking
         }
 
         void onEndDragListener(PointerEventData data)
@@ -117,7 +122,6 @@ namespace VTS
                 yield return FIXED_WAITING_TIME;
             }
 
-            Utils.log($"Call alignCard after scrool stop, velocity: {scroll.velocity.y}");
             alignCard(last_call: true);
         }
 
@@ -132,24 +136,26 @@ namespace VTS
             (int index, float position) closest_card = getClosestCard(position.y);
             setCardIndex(index: closest_card.index);
             float target = closest_card.position;
-            Utils.log($"target: {target}");
 
             if (last_call)
             {
                 // 速度歸零
                 scroll.StopMovement();
+
+                // 設定位置
                 position.y = target;
             }
             else
             {
+                // 每次經過卡片都額外減速
+                scroll.velocity *= 0.9f;
+
+                // 設定位置
                 position.y = Mathf.Lerp(position.y, target, Mathf.Clamp01(ALIGN_SPEED * Time.deltaTime));
             }
 
             // 調整位置，速度若不為零，仍會繼續滑動，但應該可以造成切換卡片時的卡頓感
             content_rt.anchoredPosition = position;
-
-            // 每次經過卡片都額外減速
-            scroll.velocity *= 0.9f;
         }
 
         /// <summary>
@@ -168,7 +174,6 @@ namespace VTS
 
                 if (current_position <= position + offset)
                 {
-                    Utils.log($"Closest is card {i}");
                     break;
                 }
             }
@@ -185,6 +190,38 @@ namespace VTS
             card_index = index;
 
             // TODO: 卡片被選取時，應有視覺回饋
+        }
+
+        public IEnumerator alignCardCoroutine(int index)
+        {
+            float destinestion = positions[index];
+            float max = 10f;
+
+            for (float t = 0f; t < max; t++)
+            {
+                alignCard(destinestion: destinestion, rate: t / max, last_call: false);
+                yield return FIXED_WAITING_TIME;
+            }
+
+            alignCard(destinestion: destinestion, rate: 1f, last_call: true);
+        }
+
+        void alignCard(float destinestion, float rate, bool last_call = true)
+        {
+            Vector2 position = content_rt.anchoredPosition;
+
+            if (last_call)
+            {
+                // 設定位置
+                position.y = destinestion;
+            }
+            else
+            {
+                // 設定位置
+                position.y = Mathf.Lerp(a: position.y, b: destinestion, t: rate);
+            }
+
+            content_rt.anchoredPosition = position;
         }
 
         public int getCardIndex()
@@ -217,13 +254,14 @@ namespace VTS
             positions = new List<float>();
             card_index = 0;
 
-            //foreach (Transform child in content)
-            //{
-            //    Destroy(child);
-            //}
+            int c, n_children = content.childCount - 1;
+
+            for(c = 1; c < n_children; c++)
+            {
+                Destroy(content.GetChild(index: c).gameObject);
+            }
 
             n_card = group.getRowNumber();
-            Utils.log($"#vocab: {n_card}");
 
             string source = group.getSource();
             (string vocabulary, string description) row;
