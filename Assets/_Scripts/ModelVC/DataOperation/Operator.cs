@@ -9,29 +9,43 @@ namespace VTS.DataOperation
 {
     public class Operator : MonoBehaviour
     {
-        Action onFileLoaded;
-
         // Start is called before the first frame update
         void Start()
         {
-            Table table = new Table();
+            Table list = new Table();
             string path = Path.Combine(Application.streamingAssetsPath, "vocabulary", "EnTw.csv");
-            List<List<string>> content = new List<List<string>>();
-            List<string> row;
+            list.load(path);
 
-            for(int i = 0; i < 29; i++)
+            int s, length = list.getRowNumber();
+
+            for(s = 2; s < length; s++)
             {
-                row = new List<string>() { $"EnTw{i}", $"table{i}" };
-                content.Add(row);
+                string source = list[s, 1];
+                string file_path = Path.Combine(Application.streamingAssetsPath,
+                                                "vocabulary",
+                                                Utils.getLanguageCode(SystemLanguage.English),
+                                                Utils.getLanguageCode(SystemLanguage.Chinese),
+                                                $"{source}.csv");
+                Utils.log($"file_path: {file_path}");
+
+                Table table = new Table();
+
+                try
+                {
+                    table.load(file_path);
+                    Utils.log($"#row: {table.getRowNumber()}");
+                }
+                catch (TableInconsistentException tie)
+                {
+                    Utils.log($"TableInconsistentException: {s}");
+                    List<List<string>> content = tie.getContent();
+                    content.RemoveAt(index: content.Count - 1);
+
+                    Table new_table = new Table();
+                    new_table.loadContent(content);
+                    new_table.save(path: file_path);
+                }
             }
-
-            table.loadContent(content);
-            _ = table.saveAsync(path: path);
-
-            table.onFileSaved += () => 
-            {
-                Utils.log("onFileSaved");
-            };
         }
     }
 }

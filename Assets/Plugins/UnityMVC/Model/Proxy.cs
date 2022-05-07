@@ -7,7 +7,7 @@ namespace UnityMVC
 {
     public abstract class Proxy : IProxy
     {
-        string proxy_name;
+        protected string proxy_name;
 
         /// <summary>
         /// 預設在 Awake 就利用物件名稱來對 Proxy 做註冊，若需要複用等不希望在 Awake 就註冊的需求，

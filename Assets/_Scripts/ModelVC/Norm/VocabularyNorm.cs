@@ -11,5 +11,20 @@
             this.vocabulary = vocabulary;
             this.description = description;
         }
+
+        public string getVocabulary()
+        {
+            return vocabulary;
+        }
+
+        public string getDescription()
+        {
+            return description;
+        }
+
+        public override string ToString()
+        {
+            return $"{vocabulary}\t{description}";
+        }
     }
 }

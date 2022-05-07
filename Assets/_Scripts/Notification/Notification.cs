@@ -7,6 +7,9 @@ namespace VTS
     public class Notification
     {
         #region MainActivity (一開始就是開著，會自行初始化，因此沒有 InitMainActivity 事件)
+        // 切換到 MainActivity
+        public const string OpenMainActivity = "OpenMainActivity";
+
         // 切換書籤
         public const string SwitchBookmark = "SwitchBookmark";
 
@@ -18,8 +21,11 @@ namespace VTS
         #endregion
 
         #region InitSpeechActivity
-        // 初始化 SpeechActivity
-        public const string InitSpeechActivity = "InitSpeechActivity";
+        // 切換到 SpeechActivity
+        public const string OpenSpeechActivity = "OpenSpeechActivity";
+
+        // Group 載入完成
+        public const string GroupLoaded = "GroupLoaded";
 
         // 單字載入完成
         public const string VocabularyLoaded = "VocabularyLoaded";
@@ -29,6 +35,9 @@ namespace VTS
 
         // 當前單字念完
         public const string FinishedReading = "FinishedReading"; 
+
+        // 觸發下一個單字的念誦
+        public const string NextVocabulary = "NextVocabulary"; 
         #endregion
     }
 }

@@ -1,50 +1,23 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 using UnityMVC;
 using VTS.DataOperation;
 
 namespace VTS
 {
-    public class GroupListProxy : Proxy
+    public class GroupListProxy : TableProxy
     {
-        Table table;
-
-        public GroupListProxy(string path) : base()
+        public GroupListProxy(string source) : base()
         {
-            table = new Table();
-
-            // ÀÉ®×¸ü¤J§¹¦¨ºÊÅ¥¾¹
+            // æª”æ¡ˆè¼‰å…¥å®Œæˆç›£è½å™¨
             table.onFileLoaded += () =>
             {
                 Facade.getInstance().sendNotification(Notification.GroupListLoaded);
             };
 
+            string path = Path.Combine(Application.streamingAssetsPath, "vocabulary", $"{source}.csv");
             _ = table.loadAsync(path: path);
-        }
-
-        public int getRowNumber()
-        {
-            return table.getRowNumber();
-        }
-
-        public IEnumerable<List<string>> iterTable()
-        {
-            if(table == null)
-            {
-                Utils.error("table == null");
-                yield break;
-            }
-
-            IEnumerable<List<string>> content = table.iterTable();
-
-            foreach (List<string> row in content)
-            {
-                yield return row;
-            }
-        }
-
-        public override void release()
-        {
-
         }
     }
 }

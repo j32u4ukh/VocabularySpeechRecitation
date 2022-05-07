@@ -21,8 +21,7 @@ namespace VTS
         public override IEnumerable<string> subscribeNotifications()
         {
             return new string[] {
-                Notification.Speak,
-                Notification.InitSpeechActivity
+                Notification.Speak
             };
         }
 
@@ -30,32 +29,31 @@ namespace VTS
         {
             switch (notification.getName())
             {
-                case Notification.InitSpeechActivity:
-                    Utils.log(Notification.InitSpeechActivity);
-                    break;
                 case Notification.Speak:
-                    SpeakNorm norm = notification.getData() as SpeakNorm;
+                    VocabularyNorm norm = notification.getData<VocabularyNorm>();
+                    Utils.log($"norm: {norm}");
                     speak(norm: norm);
                     break;
             }
         }
 
-        public void speak(SpeakNorm norm)
+        public void speak(VocabularyNorm norm)
         {
-            Utils.log();
-            VocabularyProxy proxy = Facade.getInstance().getProxy(proxy_name: norm.proxy_name) as VocabularyProxy;
-            VocabularyNorm vocab = proxy.getVocabulary(index: norm.index);
+            Utils.log($"vocabulary: {norm.getVocabulary()}, description: {norm.getDescription()}");
 
             // 念誦指定的內容
             SpeechManager.getInstance()
-                         .startReciteContent(vocab: vocab,
-                                             target: SystemLanguage.English,
-                                             describe: SystemLanguage.ChineseTraditional,
+                         .startReciteContent(vocabulary: norm.getVocabulary(),
+                                             description: norm.getDescription(),
+                                             target: Config.target,
+                                             describe: Config.describe,
                                              modes: Config.modes,
                                              callback: () =>
                                              {
+                                                 Utils.log($"sendNotification: {Notification.FinishedReading}");
+
                                                  // 全部唸完，送出通知 ENotification.FinishedReading
-                                                 Facade.getInstance().sendNotification(Notification.FinishedReading, data: norm);
+                                                 Facade.getInstance().sendNotification(Notification.FinishedReading);
                                              });
         }
     }

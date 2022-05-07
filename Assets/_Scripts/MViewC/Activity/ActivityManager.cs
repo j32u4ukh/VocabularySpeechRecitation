@@ -21,7 +21,7 @@ namespace VTS
         public override IEnumerable<string> subscribeNotifications()
         {
             return new string[] {
-                Notification.InitSpeechActivity
+                Notification.OpenSpeechActivity
             };
         }
 
@@ -29,24 +29,20 @@ namespace VTS
         {
             switch (notification.getName())
             {
-                case Notification.InitSpeechActivity:
-                    (int, int) data = notification.getData<int, int>();
-
-                    if (data.Item1.Equals(0))
-                    {
-                        initSpeechActivity(value: data.Item2);
-                    }
+                case Notification.OpenSpeechActivity:
+                    // 開啟 SpeechActivity，並根據單字組的名稱，初始化 GroupProxy
+                    initSpeechActivity(source: notification.getData<string>());
                     break;
             }
         }
 
-        void initSpeechActivity(int value)
+        void initSpeechActivity(string source)
         {
             current.SetActive(false);
             current = speech;
             current.SetActive(true);
 
-            Facade.getInstance().sendNotification(Notification.InitSpeechActivity, data: (1, value));
+            GroupProxy proxy = new GroupProxy(source: source);
         }
     }
 }

@@ -52,6 +52,13 @@ namespace UnityMVC
             model.register(proxy);
         }
 
+        /// <summary>
+        /// 直接繼承 Proxy 並使用 base() 建構子的類別可以適用，因為已知使用類別名稱作為註冊時的名稱，
+        /// 返回時也已經完成類別的轉換。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="proxy_name"></param>
+        /// <returns></returns>
         public virtual T getProxy<T>(string proxy_name = null) where T : class
         {
             if (string.IsNullOrEmpty(proxy_name))
@@ -62,6 +69,11 @@ namespace UnityMVC
             return getProxy(proxy_name: proxy_name) as T;
         }
 
+        /// <summary>
+        /// 繼承 Proxy 並做了覆寫的類別可以適用，同一個 Proxy 利用不同名稱進行註冊，使用該名稱來取得，並須自行進行轉型。
+        /// </summary>
+        /// <param name="proxy_name"></param>
+        /// <returns></returns>
         public virtual IProxy getProxy(string proxy_name)
         {
             return model.get(proxy_name);

@@ -89,13 +89,13 @@ namespace VTS
 
         public void onStartListener()
         {
-            Utils.log();
+            //Utils.log();
             setState(state: State.Start);
         }
 
         public void onDoneListener()
         {
-            Utils.log();
+            //Utils.log();
             setState(state: State.Done);
         }
 
@@ -197,10 +197,10 @@ namespace VTS
 #endif
         }
 
-        public void startReciteContent(VocabularyNorm vocab, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
+        public void startReciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
         {
-            StartCoroutine(reciteContent(vocabulary: vocab.vocabulary, 
-                                         description: vocab.description, 
+            StartCoroutine(reciteContent(vocabulary: vocabulary, 
+                                         description: description, 
                                          target: target, 
                                          describe: describe, 
                                          modes: modes,
@@ -280,7 +280,6 @@ namespace VTS
 
             while ((state != State.Done) && (state != State.Stop) && (state != State.Status) && (waiting_time < waiting_limit_time))
             {
-                Utils.log($"state: {state}, waiting_time: {waiting_time}");
                 waiting_time += wait_time;
                 yield return wait;
             }
@@ -331,7 +330,7 @@ namespace VTS
 
         void setState(State state)
         {
-            Utils.log($"Set state {this.state} -> {state}");
+            //Utils.log($"Set state {this.state} -> {state}");
             this.state = state;
         }
     }
