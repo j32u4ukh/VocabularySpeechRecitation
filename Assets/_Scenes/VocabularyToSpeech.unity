@@ -1784,6 +1784,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   content: {fileID: 1830515508}
   prefab: {fileID: 6202067532246997303, guid: ddbd5bde0f222cd4fbaa0966bdfcb44d, type: 3}
+  default_color: {r: 1, g: 1, b: 1, a: 1}
+  selected_color: {r: 1, g: 1, b: 0.53333336, a: 1}
   card_size: 100
   spacing: 10
   left: {x: 0, y: 1080}
@@ -1800,6 +1802,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391a1a3356525694898ee8f989651282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fragment: {fileID: 876061679}
 --- !u!1 &981926530
 GameObject:
   m_ObjectHideFlags: 0

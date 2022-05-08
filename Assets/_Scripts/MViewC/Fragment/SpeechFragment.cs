@@ -14,7 +14,10 @@ namespace VTS
         [SerializeField] private GameObject prefab;
         private ScrollRect scroll;
 
+        [SerializeField] private Color default_color;
+        [SerializeField] private Color selected_color;
         private List<Button> buttons;
+        private List<Image> images;
         private int n_card;
 
         #region 中線對齊相關
@@ -55,6 +58,9 @@ namespace VTS
             scroll = GetComponent<ScrollRect>();
             content_rt = content.GetComponent<RectTransform>();
             FIXED_WAITING_TIME = new WaitForSeconds(FIXED_TIME);
+            buttons = new List<Button>();
+            images = new List<Image>();
+            positions = new List<float>();
 
             ScrollViewHandler handler = GetComponent<ScrollViewHandler>();
             handler.onPointerDown.AddListener(onPointerDownListener);
@@ -190,9 +196,11 @@ namespace VTS
         /// <param name="index"></param>
         public void setCardIndex(int index)
         {
-            card_index = index;
+            getCard(card_index).image.color = default_color;
 
-            // TODO: 卡片被選取時，應有視覺回饋
+            // 更新卡片索引值
+            card_index = index;
+            getCard(card_index).image.color = selected_color;
         }
 
         public IEnumerator alignCardCoroutine(int index)
@@ -207,6 +215,7 @@ namespace VTS
             }
 
             alignCard(destinestion: destinestion, rate: 1f, last_call: true);
+            setCardIndex(index: index);
         }
 
         void alignCard(float destinestion, float rate, bool last_call = true)
@@ -224,6 +233,20 @@ namespace VTS
                 position.y = Mathf.Lerp(a: position.y, b: destinestion, t: rate);
             }
 
+            content_rt.anchoredPosition = position;
+        }
+
+        public void alignCard(int index)
+        {
+            if(positions == null)
+            {
+                return;
+            }
+
+            float y = positions[index];
+
+            Vector2 position = content_rt.anchoredPosition;
+            position.y = y;
             content_rt.anchoredPosition = position;
         }
 
@@ -258,9 +281,9 @@ namespace VTS
                 return;
             }
             
-            buttons = new List<Button>();
-            positions = new List<float>();
-            card_index = 0;
+            buttons.Clear();
+            images.Clear();
+            positions.Clear();
 
             int c, n_children = content.childCount - 1;
 
@@ -300,6 +323,7 @@ namespace VTS
                 });
 
                 buttons.Add(button);
+                images.Add(button.GetComponent<Image>());
             }
 
             buttons.Reverse();

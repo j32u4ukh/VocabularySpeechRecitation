@@ -8,8 +8,9 @@ namespace VTS
     {
         string source;
 
-        public GroupProxy(string source) : base()
+        public GroupProxy(string source)
         {
+            register(name: $"GroupProxy-{source}");
             load(source: source);
         }
 

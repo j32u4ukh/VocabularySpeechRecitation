@@ -70,21 +70,9 @@ namespace VTS
             current.SetActive(true);
 
             // GroupProxy 尚未存在
-            if (!Facade.getInstance().tryGetProxy(out GroupProxy proxy))
+            if (!Facade.getInstance().isProxyExists(proxy_name: $"GroupProxy-{source}"))
             {
-                Utils.log("首次建構 GroupProxy");
                 new GroupProxy(source: source);
-            }
-
-            // GroupProxy 已存在，但要以新的數據源來載入
-            else if (!proxy.getSource().Equals(source))
-            {
-                Utils.log($"GroupProxy 已存在({proxy.getSource()})，但要以新的數據源({source})來載入");
-                proxy.load(source: source);
-            }
-            else
-            {
-                Utils.log("GroupProxy 已存在，且使用相同數據源");
             }
         }
 

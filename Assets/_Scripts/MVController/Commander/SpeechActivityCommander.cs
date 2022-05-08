@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityMVC;
 
 namespace VTS
@@ -10,7 +11,9 @@ namespace VTS
             // 對應手機上的返回鍵
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Utils.log($"Click {KeyCode.Escape}, send Notification.OpenMainActivity");
+                SpeechManager.getInstance().stop();
+                SpeechManager.getInstance().release();
+                Facade.getInstance().sendNotification(Notification.StopSpeaking);
                 Facade.getInstance().sendNotification(Notification.OpenMainActivity);
             }
         }

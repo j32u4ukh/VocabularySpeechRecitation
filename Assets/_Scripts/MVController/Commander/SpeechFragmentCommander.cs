@@ -1,17 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityMVC;
 
 namespace VTS
 {
     public class SpeechFragmentCommander : Commander
     {
-        SpeechFragment fragment;
-        bool keep_speaking = true;
+        [SerializeField] SpeechFragment fragment;
 
-        private void Start()
+        private void OnEnable()
         {
-            fragment = GetComponent<SpeechFragment>();
+            fragment.alignCard(index: 0);
         }
 
         public override IEnumerable<string> subscribeNotifications()
@@ -45,12 +46,13 @@ namespace VTS
             }
         }
 
+        void alignCard(int index)
+        {
+            StartCoroutine(fragment.alignCardCoroutine(index: index));
+        }
+
         IEnumerator nextVocabularyCoroutine(int index)
         {
-            // 設置目標卡片索引值
-            fragment.setCardIndex(index: index);
-
-            // 等待目標卡片移到中線位置
             yield return StartCoroutine(fragment.alignCardCoroutine(index: index));
 
             // 觸發目標卡片以念誦單字

@@ -158,6 +158,16 @@ namespace UnityMVC
         {
             return controller.isExists(commander_name);
         }
+
+        //public virtual bool tryGetCommander<T>(out T commander, string commander_name = null) where T : class
+        //{
+
+        //}
+
+        //public virtual bool tryGetCommander(string commander_name, out ICommander commander)
+        //{
+
+        //}
         #endregion
 
         #region Notification
