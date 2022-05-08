@@ -48,29 +48,26 @@ namespace VTS
         {
             wait = new WaitForSeconds(wait_time);
 
-            if(Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                voice = new SpVoice();
-                tokens = voice.GetVoices(string.Empty, string.Empty);
-                controller.gameObject.SetActive(false);
+#if UNITY_EDITOR
+            voice = new SpVoice();
+            tokens = voice.GetVoices(string.Empty, string.Empty);
+            controller.gameObject.SetActive(false);
 
-                onStatus += onStatusListener;
-                onStart += onStartListener;
-                onDone += onDoneListener;
-                onStop += onStopListener;
-            }
-            else if (Application.platform == RuntimePlatform.Android)
-            {
-                controller.gameObject.SetActive(true);
+            onStatus += onStatusListener;
+            onStart += onStartListener;
+            onDone += onDoneListener;
+            onStop += onStopListener;
+#elif UNITY_ANDROID
+            controller.gameObject.SetActive(true);
 
-                controller.OnStatus.AddListener(onStatusListener);
-                controller.OnStart.AddListener(onStartListener);
-                controller.OnDone.AddListener(onDoneListener);
-                controller.OnStop.AddListener(onStopListener);
+            controller.OnStatus.AddListener(onStatusListener);
+            controller.OnStart.AddListener(onStartListener);
+            controller.OnDone.AddListener(onDoneListener);
+            controller.OnStop.AddListener(onStopListener);
 
-                // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
-                StartCoroutine(preSetLanguage());
-            }
+            // 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
+            StartCoroutine(preSetLanguage());
+#endif
         }
 
         public static SpeechManager getInstance()
@@ -78,7 +75,7 @@ namespace VTS
             return instance;
         }
 
-        #region 實作 ISpeech
+#region 實作 ISpeech
         public void onStatusListener(string message)
         {
             Utils.log(message);
@@ -102,7 +99,7 @@ namespace VTS
             Utils.log(message);
             setState(state: State.Stop);
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
@@ -126,58 +123,54 @@ namespace VTS
         /// <param name="language"></param>
         public void setLanguage(SystemLanguage language)
         {
-            if (Application.platform == RuntimePlatform.WindowsEditor)
+#if UNITY_EDITOR
+            string lang = language.ToString();
+
+            // 會因不同電腦有安裝的語言套件而有所不同，這裡的索引值對應的語言是在我的電腦才成立的，
+            // 但本來也就不是要提供電腦版，只是方便測試才讓電腦版也可以發聲
+            switch (language)
             {
-                string lang = language.ToString();
-
-                // 會因不同電腦有安裝的語言套件而有所不同，這裡的索引值對應的語言是在我的電腦才成立的，
-                // 但本來也就不是要提供電腦版，只是方便測試才讓電腦版也可以發聲
-                switch (language)
-                {
-                    case SystemLanguage.English:
-                        voice.Voice = tokens.Item(1);
-                        break;
-                    case SystemLanguage.Japanese:
-                        voice.Voice = tokens.Item(2);
-                        break;
-                    case SystemLanguage.ChineseTraditional:
-                    case SystemLanguage.Chinese:
-                    default:
-                        voice.Voice = tokens.Item(0);
-                        lang = SystemLanguage.Chinese.ToString();
-                        break;
-                }
-
-                onStatus?.Invoke($"Set language to {lang}");
+                case SystemLanguage.English:
+                    voice.Voice = tokens.Item(1);
+                    break;
+                case SystemLanguage.Japanese:
+                    voice.Voice = tokens.Item(2);
+                    break;
+                case SystemLanguage.ChineseTraditional:
+                case SystemLanguage.Chinese:
+                default:
+                    voice.Voice = tokens.Item(0);
+                    lang = SystemLanguage.Chinese.ToString();
+                    break;
             }
-            else if (Application.platform == RuntimePlatform.Android)
+
+            onStatus?.Invoke($"Set language to {lang}");
+
+#elif UNITY_ANDROID
+            string language_code = Utils.getLanguageCode(language: language);
+
+            if (language_code != null)
             {
-                string language_code = Utils.getLanguageCode(language: language);
-
-                if (language_code != null)
-                {
-                    controller.Locale = language_code;
-                }
-                else
-                {
-                    controller.Locale = Utils.getLanguageCode(language: SystemLanguage.ChineseTraditional);
-                }
+                controller.Locale = language_code;
             }
+            else
+            {
+                controller.Locale = Utils.getLanguageCode(language: SystemLanguage.ChineseTraditional);
+            }
+#endif
         }
 
         public void speak(string content)
         {
             Utils.log($"content: {content}");
 
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                StartCoroutine(speakCoroutine(content: content));
-            }
-            else if (Application.platform == RuntimePlatform.Android)
-            {
-                setState(state: State.Start);
-                controller.StartSpeech(content);
-            }
+#if UNITY_EDITOR
+            StartCoroutine(speakCoroutine(content: content));
+
+#elif UNITY_ANDROID
+            setState(state: State.Start);
+            controller.StartSpeech(content);
+#endif
         }
 
         IEnumerator speakCoroutine(string content)
@@ -209,16 +202,14 @@ namespace VTS
         {
             setState(state: State.Idle);
 
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
-                voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
-                onStatus?.Invoke($"Set speed to {voice.Rate}");
-            }
-            else if (Application.platform == RuntimePlatform.Android)
-            {
-                controller.Speed = speed;
-            }
+#if UNITY_EDITOR
+            // https://docs.microsoft.com/zh-tw/dotnet/api/system.speech.synthesis.speechsynthesizer.rate?view=netframework-4.8
+            voice.Rate = Mathf.Clamp((int)Math.Round(speed) - 1, -10, 10);
+            onStatus?.Invoke($"Set speed to {voice.Rate}");
+
+#elif UNITY_ANDROID
+            controller.Speed = speed;
+#endif
         }
 
         public void startReciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
@@ -358,28 +349,27 @@ namespace VTS
 
         public void stop()
         {
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                is_interrupt = true;
-                voice.Speak(string.Empty, SpeechVoiceSpeakFlags.SVSFPurgeBeforeSpeak);
-                onStop.Invoke("Stop");
-            }
-            else if (Application.platform == RuntimePlatform.Android)
-            {
-                controller.StopSpeech();
-            }
+
+#if UNITY_EDITOR
+            is_interrupt = true;
+            voice.Speak(string.Empty, SpeechVoiceSpeakFlags.SVSFPurgeBeforeSpeak);
+            onStop.Invoke("Stop");
+
+#elif UNITY_ANDROID
+            controller.StopSpeech();
+#endif
         }
 
         public void release()
         {
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
+#if UNITY_EDITOR
+            is_interrupt = true;
+            voice.Speak(string.Empty, SpeechVoiceSpeakFlags.SVSFPurgeBeforeSpeak);
+            onStop.Invoke("Stop");
 
-            }
-            else if (Application.platform == RuntimePlatform.Android)
-            {
-                controller.Release();
-            }
+#elif UNITY_ANDROID
+            controller.Release();
+#endif
 
             setState(state: State.Idle);
         }

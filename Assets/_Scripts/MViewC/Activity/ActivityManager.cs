@@ -17,7 +17,6 @@ namespace VTS
             // 預設開啟時的 Activity 為 MainActivity
             current = main;
 
-
 #if !UNITY_EDITOR && UNITY_ANDROID
             reporter.SetActive(true);
 #else
