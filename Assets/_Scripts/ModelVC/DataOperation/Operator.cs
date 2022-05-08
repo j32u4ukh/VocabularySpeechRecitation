@@ -16,35 +16,49 @@ namespace VTS.DataOperation
             string path = Path.Combine(Application.streamingAssetsPath, "vocabulary", "EnTw.csv");
             list.load(path);
 
-            int s, length = list.getRowNumber();
+            string source = "vocabulary";
+            string file_path = Path.Combine(Application.streamingAssetsPath,
+                                            "vocabulary",
+                                            Utils.getLanguageCode(SystemLanguage.English),
+                                            Utils.getLanguageCode(SystemLanguage.Chinese),
+                                            $"{source}.csv");
+            Utils.log($"file_path: {file_path}");
 
-            for(s = 2; s < length; s++)
+            string content = Loader.readFile(path: file_path);
+            CharacterSeparatedValues csv = new CharacterSeparatedValues();
+            csv.parseFile(content: content, ',');
+            int n_row = csv.getRowNumber();
+            Utils.log($"#row: {n_row}");
+
+            List<List<string>> table = csv.getContent();
+            table = table.shuffle();
+
+            List<List<string>> new_content;
+            int i, j, idx, n_file = 29, file_size = 100;
+
+            for(i = 0; i < n_file; i++)
             {
-                string source = list[s, 1];
-                string file_path = Path.Combine(Application.streamingAssetsPath,
-                                                "vocabulary",
-                                                Utils.getLanguageCode(SystemLanguage.English),
-                                                Utils.getLanguageCode(SystemLanguage.Chinese),
-                                                $"{source}.csv");
-                Utils.log($"file_path: {file_path}");
+                new_content = new List<List<string>>();
 
-                Table table = new Table();
-
-                try
+                for (j = 0; j < file_size; j++)
                 {
-                    table.load(file_path);
-                    Utils.log($"#row: {table.getRowNumber()}");
-                }
-                catch (TableInconsistentException tie)
-                {
-                    Utils.log($"TableInconsistentException: {s}");
-                    List<List<string>> content = tie.getContent();
-                    content.RemoveAt(index: content.Count - 1);
+                    idx = 100 * i + j;
 
-                    Table new_table = new Table();
-                    new_table.loadContent(content);
-                    new_table.save(path: file_path);
+                    if(idx < n_row)
+                    {
+                        new_content.Add(table[idx]);
+                    }
                 }
+
+                new_content = new_content.sort();
+
+                Table new_table = new Table();
+                new_table.loadContent(new_content);
+                new_table.save(Path.Combine(Application.streamingAssetsPath,
+                                            "vocabulary",
+                                            Utils.getLanguageCode(SystemLanguage.English),
+                                            Utils.getLanguageCode(SystemLanguage.Chinese),
+                                            $"table{i}.csv"));
             }
         }
     }

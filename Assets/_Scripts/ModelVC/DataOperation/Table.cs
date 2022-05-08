@@ -41,7 +41,7 @@ namespace VTS.DataOperation
 
         private void parseFile(string content)
         {
-            parseFile(content: content, '\r');
+            parseFile(content: content, ',');
 
             int n_column = this.content[0].Count;
 

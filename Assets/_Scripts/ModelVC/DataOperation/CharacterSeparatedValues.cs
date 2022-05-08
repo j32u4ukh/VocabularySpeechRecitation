@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -33,25 +33,25 @@ namespace VTS.DataOperation
             parseFile(content, separator);
         }
 
-        protected void parseFile(string content, params char[] separator)
+        public void parseFile(string content, params char[] separator)
         {
             this.content = new List<List<string>>();
 
-            // Åª¨ú¨C¤@¦æªº¤º®e  
-            string[] lines = content.Split(separator);
+            // è®€å–æ¯ä¸€è¡Œçš„å…§å®¹  
+            string[] lines = content.Split('\r');
 
-            // ¼È¦s¨C¤@¦æ©î¤À«áªº¤º®e
+            // æš«å­˜æ¯ä¸€è¡Œæ‹†åˆ†å¾Œçš„å…§å®¹
             string[] columns;
 
-            // ¨C¤@¦æ³B²z¹L«áªº¤º®e
+            // æ¯ä¸€è¡Œè™•ç†éå¾Œçš„å…§å®¹
             List<string> row;
 
-            // §â csv ¤¤ªº¼Æ¾ÚÀx¦s¦b¤G¦ì¼Æ²Õ¤¤  
+            // æŠŠ csv ä¸­çš„æ•¸æ“šå„²å­˜åœ¨äºŒä½æ•¸çµ„ä¸­  
             for (int i = 0; i < lines.Length; i++)
             {
                 try
                 {
-                    columns = lines[i].Split(',');
+                    columns = lines[i].Trim().Split(separator);
                     row = new List<string>();
 
                     foreach (string column in columns)
@@ -80,7 +80,7 @@ namespace VTS.DataOperation
             }
         }
 
-        #region ÀÉ®×¼g¥X
+        #region æª”æ¡ˆå¯«å‡º
         public void save(string path)
         {
             if (content == null)
@@ -88,18 +88,8 @@ namespace VTS.DataOperation
                 return;
             }
 
-            // ÀË¬dÀÉ®×¬O§_¦s¦b¡A¤£¦s¦b«h«Ø¥ß
-            StreamWriter writer;
-
-            if (!File.Exists(path))
-            {
-                writer = new FileInfo(path).CreateText();
-                Utils.log($"Create file: {path}");
-            }
-            else
-            {
-                writer = new FileInfo(path).AppendText();
-            }
+            StreamWriter writer = new StreamWriter(path: path, append: false,
+                                                   encoding: System.Text.Encoding.UTF8);
 
             string line;
             int i, len = content.Count - 1;
@@ -113,11 +103,11 @@ namespace VTS.DataOperation
             line = string.Join(",", content[len]);
             writer.Write(line);
 
-            // Flush: ±j¨î°õ¦æ¤F¤@¦¸§â¸ê®Æ¼g¥XµwºĞ¡A¦¹®É¸ê®Æ¤~½T¹ê¼g¤J¨ì¤FÀÉ®×¤¤¡CÁ×§K¦pªGµ{¦¡¬ğµM¤¤Â_¡A¸ê®Æ©|¥¼¼g¨ìÀÉ®×¤¤¡A³y¦¨¸ê®Æ¥á¥¢¡C
+            // Flush: å¼·åˆ¶åŸ·è¡Œäº†ä¸€æ¬¡æŠŠè³‡æ–™å¯«å‡ºç¡¬ç¢Ÿï¼Œæ­¤æ™‚è³‡æ–™æ‰ç¢ºå¯¦å¯«å…¥åˆ°äº†æª”æ¡ˆä¸­ã€‚é¿å…å¦‚æœç¨‹å¼çªç„¶ä¸­æ–·ï¼Œè³‡æ–™å°šæœªå¯«åˆ°æª”æ¡ˆä¸­ï¼Œé€ æˆè³‡æ–™ä¸Ÿå¤±ã€‚
             writer.Flush();
 
-            // Close ­t³dÃö³¬¡ADispose ­t³d¾PÀìª«¥ó¡CDispose ·|­t³d Close ªº¤@¤Á¨Æ°È¡AÃB¥~ÁÙ¦³¾PÀìª«¥óªº¤u§@¡A§Y Dispose ¥]§t Close
-            // ¦ı StreamWriter ¹ï Close ÂĞ¼g¡A¸Ì­±¹ê»Ú©I¥s Dispose¡C¨âªÌ®ÄªG¬Û¦P¡A«h¤@©I¥s§Y¥i¡C
+            // Close è² è²¬é—œé–‰ï¼ŒDispose è² è²¬éŠ·ç‡¬ç‰©ä»¶ã€‚Dispose æœƒè² è²¬ Close çš„ä¸€åˆ‡äº‹å‹™ï¼Œé¡å¤–é‚„æœ‰éŠ·ç‡¬ç‰©ä»¶çš„å·¥ä½œï¼Œå³ Dispose åŒ…å« Close
+            // ä½† StreamWriter å° Close è¦†å¯«ï¼Œè£¡é¢å¯¦éš›å‘¼å« Disposeã€‚å…©è€…æ•ˆæœç›¸åŒï¼Œå‰‡ä¸€å‘¼å«å³å¯ã€‚
             //writer.Close();
             writer.Dispose();
 

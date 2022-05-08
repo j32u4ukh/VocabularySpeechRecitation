@@ -265,6 +265,7 @@ namespace VTS
             }
 
             n_card = group.getRowNumber();
+            Utils.log($"vocab: {n_card}");
 
             string source = group.getSource();
             (string vocabulary, string description) row;
