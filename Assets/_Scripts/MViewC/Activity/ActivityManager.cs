@@ -27,8 +27,9 @@ namespace VTS
         public override IEnumerable<string> subscribeNotifications()
         {
             return new string[] {
-                Notification.Speak,
-                Notification.OpenSpeechActivity
+                Notification.OpenMainActivity,
+                Notification.OpenSpeechActivity,
+                Notification.Speak
             };
         }
 
@@ -36,6 +37,11 @@ namespace VTS
         {
             switch (notification.getName())
             {
+                case Notification.OpenMainActivity:
+                    // 開啟 MainActivity
+                    openMainActivity();
+                    break;
+
                 case Notification.OpenSpeechActivity:
                     // 開啟 SpeechActivity，並根據單字組的名稱，初始化 GroupProxy
                     initSpeechActivity(source: notification.getData<string>());
@@ -49,13 +55,37 @@ namespace VTS
             }
         }
 
+        void openMainActivity()
+        {
+            Utils.log();
+            current.SetActive(false);
+            current = main;
+            current.SetActive(true);
+        }
+
         void initSpeechActivity(string source)
         {
             current.SetActive(false);
             current = speech;
             current.SetActive(true);
 
-            new GroupProxy(source: source);
+            // GroupProxy 尚未存在
+            if (!Facade.getInstance().tryGetProxy(out GroupProxy proxy))
+            {
+                Utils.log("首次建構 GroupProxy");
+                new GroupProxy(source: source);
+            }
+
+            // GroupProxy 已存在，但要以新的數據源來載入
+            else if (!proxy.getSource().Equals(source))
+            {
+                Utils.log($"GroupProxy 已存在({proxy.getSource()})，但要以新的數據源({source})來載入");
+                proxy.load(source: source);
+            }
+            else
+            {
+                Utils.log("GroupProxy 已存在，且使用相同數據源");
+            }
         }
 
         public void speak(VocabularyNorm norm)

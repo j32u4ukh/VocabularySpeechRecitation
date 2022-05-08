@@ -18,16 +18,16 @@ namespace UnityMVC
             proxy.onRegister();
         }
 
-        public virtual IProxy get(string name)
+        public virtual bool tryGet(string name, out IProxy proxy)
         {
-            if(proxies.TryGetValue(name, out IProxy proxy))
+            bool is_exists = proxies.TryGetValue(name, out proxy);
+
+            if (!is_exists)
             {
-                return proxy;
+                Debug.LogWarning($"[{GetType().Name}] get | Get IProxy({name}) failed.");
             }
 
-            Debug.LogWarning($"[{GetType().Name}] get | Get IProxy({name}) failed.");
-
-            return null;
+            return is_exists;
         }
 
         public virtual bool isExists(string name)

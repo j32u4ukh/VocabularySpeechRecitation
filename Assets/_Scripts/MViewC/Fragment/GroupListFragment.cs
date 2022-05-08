@@ -37,24 +37,26 @@ namespace VTS
                 Destroy(child);
             }
 
-            GroupListProxy group_list = Facade.getInstance().getProxy<GroupListProxy>();
-            Utils.log($"#group: {group_list.getRowNumber()}");
-            GameObject obj;
-            Button button;
-
-            foreach (List<string> row in group_list.iterTable())
+            if(Facade.getInstance().tryGetProxy(out GroupListProxy group_list))
             {
-                obj = Instantiate(original: prefab, parent: content);
-                button = obj.GetComponent<Button>();
+                Utils.log($"#group: {group_list.getRowNumber()}");
+                GameObject obj;
+                Button button;
 
-                // 按鈕呈現文字，說明當前為哪個單字組(Group)
-                obj.GetComponentInChildren<Text>().text = row[0];
-
-                button.onClick.AddListener(() =>
+                foreach (List<string> row in group_list.iterTable())
                 {
-                    Facade.getInstance().sendNotification(Notification.OpenSpeechActivity, data: row[1]);
-                });
-            }
+                    obj = Instantiate(original: prefab, parent: content);
+                    button = obj.GetComponent<Button>();
+
+                    // 按鈕呈現文字，說明當前為哪個單字組(Group)
+                    obj.GetComponentInChildren<Text>().text = row[0];
+
+                    button.onClick.AddListener(() =>
+                    {
+                        Facade.getInstance().sendNotification(Notification.OpenSpeechActivity, data: row[1]);
+                    });
+                }
+            }            
         }
     }
 }

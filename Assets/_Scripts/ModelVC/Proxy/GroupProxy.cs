@@ -10,6 +10,11 @@ namespace VTS
 
         public GroupProxy(string source) : base()
         {
+            load(source: source);
+        }
+
+        public void load(string source)
+        {
             this.source = source;
 
             // 檔案載入完成監聽器

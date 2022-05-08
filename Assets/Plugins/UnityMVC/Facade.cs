@@ -59,14 +59,25 @@ namespace UnityMVC
         /// <typeparam name="T"></typeparam>
         /// <param name="proxy_name"></param>
         /// <returns></returns>
-        public virtual T getProxy<T>(string proxy_name = null) where T : class
+        public virtual bool tryGetProxy<T>(out T t_proxy, string proxy_name = null) where T : class
         {
             if (string.IsNullOrEmpty(proxy_name))
             {
                 proxy_name = typeof(T).Name;
             }
 
-            return getProxy(proxy_name: proxy_name) as T;
+            bool is_exists = tryGetProxy(proxy_name: proxy_name, out IProxy proxy);
+
+            if (is_exists)
+            {
+                t_proxy = proxy as T;
+            }
+            else
+            {
+                t_proxy = null;
+            }
+
+            return is_exists;
         }
 
         /// <summary>
@@ -74,14 +85,24 @@ namespace UnityMVC
         /// </summary>
         /// <param name="proxy_name"></param>
         /// <returns></returns>
-        public virtual IProxy getProxy(string proxy_name)
+        public virtual bool tryGetProxy(string proxy_name, out IProxy proxy)
         {
-            return model.get(proxy_name);
+            return model.tryGet(proxy_name, out proxy);
         }
 
         public virtual IProxy releaseProxy(string proxy_name)
         {
             return model.release(proxy_name);
+        }
+
+        public virtual bool isProxyExists<T>(string proxy_name = null) where T : class
+        {
+            if (string.IsNullOrEmpty(proxy_name))
+            {
+                proxy_name = typeof(T).Name;
+            }
+
+            return isProxyExists(proxy_name);
         }
 
         public virtual bool isProxyExists(string proxy_name)

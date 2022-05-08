@@ -6,7 +6,7 @@ namespace UnityMVC
 
         bool isExists(string name);
 
-        IProxy get(string name);
+        bool tryGet(string name, out IProxy proxy);
 
         IProxy release(string name);
     }

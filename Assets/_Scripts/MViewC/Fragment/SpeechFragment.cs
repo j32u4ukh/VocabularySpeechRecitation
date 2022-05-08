@@ -252,7 +252,12 @@ namespace VTS
         /// </summary>
         void init()
         {
-            GroupProxy group = Facade.getInstance().getProxy<GroupProxy>();
+            if (!Facade.getInstance().tryGetProxy(out GroupProxy group))
+            {
+                Utils.error($"GroupProxy is not exists.");
+                return;
+            }
+            
             buttons = new List<Button>();
             positions = new List<float>();
             card_index = 0;
