@@ -1659,9 +1659,9 @@ GameObject:
   - component: {fileID: 876061677}
   - component: {fileID: 876061676}
   - component: {fileID: 876061675}
-  - component: {fileID: 876061678}
   - component: {fileID: 876061679}
   - component: {fileID: 876061680}
+  - component: {fileID: 876061678}
   m_Layer: 5
   m_Name: SpeechFragment
   m_TagString: Untagged

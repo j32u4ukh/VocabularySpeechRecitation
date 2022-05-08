@@ -7,6 +7,7 @@ namespace VTS
     public class SpeechFragmentCommander : Commander
     {
         SpeechFragment fragment;
+        bool keep_speaking = true;
 
         private void Start()
         {

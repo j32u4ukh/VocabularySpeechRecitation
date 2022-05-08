@@ -102,7 +102,10 @@ namespace VTS
 
         void onPointerDownListener(PointerEventData data)
         {
-            // TODO: send notification to stop speaking
+            Utils.log();
+            SpeechManager.getInstance().stop();
+            SpeechManager.getInstance().release(); 
+            Facade.getInstance().sendNotification(Notification.StopSpeaking);
         }
 
         void onEndDragListener(PointerEventData data)

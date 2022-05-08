@@ -37,17 +37,26 @@ namespace VTS
         {
             switch (notification.getName())
             {
+                case Notification.OpenSpeechActivity:
+                    // 開啟 SpeechActivity，並根據單字組的名稱，初始化 GroupProxy
+                    initSpeechActivity(source: notification.getData<string>());
+                    break;
+
                 case Notification.Speak:
                     VocabularyNorm norm = notification.getData<VocabularyNorm>();
                     Utils.log($"norm: {norm}");
                     speak(norm: norm);
                     break;
-
-                case Notification.OpenSpeechActivity:
-                    // 開啟 SpeechActivity，並根據單字組的名稱，初始化 GroupProxy
-                    initSpeechActivity(source: notification.getData<string>());
-                    break;
             }
+        }
+
+        void initSpeechActivity(string source)
+        {
+            current.SetActive(false);
+            current = speech;
+            current.SetActive(true);
+
+            new GroupProxy(source: source);
         }
 
         public void speak(VocabularyNorm norm)
@@ -64,15 +73,6 @@ namespace VTS
                                                  // 全部唸完，送出通知 ENotification.FinishedReading
                                                  Facade.getInstance().sendNotification(Notification.FinishedReading);
                                              });
-        }
-
-        void initSpeechActivity(string source)
-        {
-            current.SetActive(false);
-            current = speech;
-            current.SetActive(true);
-
-            new GroupProxy(source: source);
         }
     }
 }

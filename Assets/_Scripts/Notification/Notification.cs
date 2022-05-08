@@ -33,6 +33,9 @@ namespace VTS
         // 念單字(與它的說明)
         public const string Speak = "Speak";
 
+        // 念單字(與它的說明)
+        public const string StopSpeaking = "StopSpeaking";
+
         // 當前單字念完
         public const string FinishedReading = "FinishedReading"; 
 

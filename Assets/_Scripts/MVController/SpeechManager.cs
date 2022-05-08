@@ -14,10 +14,10 @@ namespace VTS
 
         #region 時間相關設定
         float wait_time = 0.01f;
-        float interval_time = 1.0f;
+
         float waiting_limit_time = 20.0f;
         WaitForSeconds wait;
-        WaitForSeconds interval; 
+
         #endregion
 
         #region SpeechLib
@@ -27,6 +27,8 @@ namespace VTS
         event Action onStart;
         event Action onDone;
         event Action<string> onStop;
+
+        bool is_interrupt = false;
         #endregion
 
         #region FantomLib
@@ -45,7 +47,6 @@ namespace VTS
         void Start()
         {
             wait = new WaitForSeconds(wait_time);
-            interval = new WaitForSeconds(interval_time);
 
             if(Application.platform == RuntimePlatform.WindowsEditor)
             {
@@ -80,25 +81,33 @@ namespace VTS
         #region 實作 ISpeech
         public void onStatusListener(string message)
         {
+            Utils.log(message);
             setState(state: State.Status);
         }
 
         public void onStartListener()
         {
+            Utils.log();
             setState(state: State.Start);
         }
 
         public void onDoneListener()
         {
+            Utils.log();
             setState(state: State.Done);
         }
 
         public void onStopListener(string message)
         {
+            Utils.log(message);
             setState(state: State.Stop);
         }
         #endregion
 
+        /// <summary>
+        /// 主動對語言進行設置，避免無法在第一次設置語言後立即念誦的問題
+        /// </summary>
+        /// <returns></returns>
         IEnumerator preSetLanguage()
         {
             setLanguage(language: SystemLanguage.English);
@@ -162,14 +171,32 @@ namespace VTS
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                onStart?.Invoke();
-                voice.Speak(content);
-                onDone?.Invoke();
+                StartCoroutine(speakCoroutine(content: content));
             }
             else if (Application.platform == RuntimePlatform.Android)
             {
                 setState(state: State.Start);
                 controller.StartSpeech(content);
+            }
+        }
+
+        IEnumerator speakCoroutine(string content)
+        {
+            onStart?.Invoke();
+            voice.Speak(content, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+
+            while (!voice.WaitUntilDone(msTimeout: 10))
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            if (is_interrupt)
+            {
+
+            }
+            else
+            {
+                onDone?.Invoke();
             }
         }
 
@@ -206,6 +233,7 @@ namespace VTS
 
         IEnumerator reciteContent(string vocabulary, string description, SystemLanguage target, SystemLanguage describe, ReciteMode[] modes, Action callback = null)
         {
+            is_interrupt = false;
             yield return StartCoroutine(waitForIdle());
 
             SystemLanguage language = SystemLanguage.Chinese;
@@ -229,20 +257,33 @@ namespace VTS
                         language = target;
                         content = getSpelling(content: vocabulary, language: target);
                         break;
+                }
 
-                    case ReciteMode.Interval:
-                        yield return interval;
-                        continue;
+                if (is_interrupt)
+                {
+                    break;
                 }
 
                 setLanguage(language: language);
                 yield return StartCoroutine(waitForRelease());
 
+                if(is_interrupt)
+                {
+                    break;
+                }
+
                 speak(content: content);
                 yield return StartCoroutine(waitForRelease());
             }
 
-            callback?.Invoke();
+            if (is_interrupt)
+            {
+                Utils.log("Been interrupted.");
+            }
+            else
+            {
+                callback?.Invoke();
+            }
         }
 
         /// <summary>
@@ -275,7 +316,7 @@ namespace VTS
         {
             float waiting_time = 0f;
 
-            while ((state != State.Done) && (state != State.Stop) && (state != State.Status) && (waiting_time < waiting_limit_time))
+            while ((state != State.Done) && (state != State.Stop) && (state != State.Status) && (waiting_time < waiting_limit_time) && !is_interrupt)
             {
                 waiting_time += wait_time;
                 yield return wait;
@@ -315,19 +356,37 @@ namespace VTS
             wait = new WaitForSeconds(value);
         }
 
-        /// <summary>
-        /// 設置間隔時間，並更新間隔的秒數物件
-        /// </summary>
-        /// <param name="value"></param>
-        public void setIntervalTime(float value)
+        public void stop()
         {
-            interval_time = value;
-            interval = new WaitForSeconds(value);
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                is_interrupt = true;
+                voice.Speak(string.Empty, SpeechVoiceSpeakFlags.SVSFPurgeBeforeSpeak);
+                onStop.Invoke("Stop");
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                controller.StopSpeech();
+            }
+        }
+
+        public void release()
+        {
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                controller.Release();
+            }
+
+            setState(state: State.Idle);
         }
 
         void setState(State state)
         {
-            //Utils.log($"Set state {this.state} -> {state}");
+            Utils.log($"Set state {this.state} -> {state}");
             this.state = state;
         }
     }
