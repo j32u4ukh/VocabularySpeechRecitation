@@ -56,7 +56,9 @@ namespace VTS
                         Facade.getInstance().sendNotification(Notification.OpenSpeechActivity, data: row[1]);
                     });
                 }
-            }            
+
+                // TODO: 根據卡片數量，設置 content 高度
+            }
         }
     }
 }
